@@ -4451,39 +4451,34 @@ ending_typeBConcertPatchToPpuForHeight:
         .addr   @height4
         .addr   @height5
 @heightUnused:
-        lda     #$A8
-        sta     patchToPpuAddr+1
-        lda     #$22
-        sta     patchToPpuAddr
-        jsr     patchToPpu
 @height0:
-        lda     #$A8
+        lda     #>ending_patchToPpu_typeBConcertHeight0
         sta     patchToPpuAddr+1
-        lda     #$34
+        lda     #<ending_patchToPpu_typeBConcertHeight0
         sta     patchToPpuAddr
         jsr     patchToPpu
 @height1:
-        lda     #$A8
+        lda     #>ending_patchToPpu_typeBConcertHeight1
         sta     patchToPpuAddr+1
-        lda     #$4A
+        lda     #<ending_patchToPpu_typeBConcertHeight1
         sta     patchToPpuAddr
         jsr     patchToPpu
 @height2:
-        lda     #$A8
+        lda     #>ending_patchToPpu_typeBConcertHeight2
         sta     patchToPpuAddr+1
-        lda     #$62
+        lda     #<ending_patchToPpu_typeBConcertHeight2
         sta     patchToPpuAddr
         jsr     patchToPpu
 @height3:
-        lda     #$A8
+        lda     #>ending_patchToPpu_typeBConcertHeight3
         sta     patchToPpuAddr+1
-        lda     #$7A
+        lda     #<ending_patchToPpu_typeBConcertHeight3
         sta     patchToPpuAddr
         jsr     patchToPpu
 @height4:
-        lda     #$A8
+        lda     #>ending_patchToPpu_typeBConcertHeight4
         sta     patchToPpuAddr+1
-        lda     #$96
+        lda     #<ending_patchToPpu_typeBConcertHeight4
         sta     patchToPpuAddr
         jsr     patchToPpu
 @height5:
@@ -4873,9 +4868,6 @@ luigiFrameToSpriteTable:
         .byte   $29,$29
 ; Used by patchToPpu. Address followed by bytes to write. $FE to start next address. $FD to end
 ending_patchToPpu_typeBConcertHeightUnused:
-        .byte   $21,$A5,$FF,$FF,$FF,$FE,$21,$C5
-        .byte   $FF,$FF,$FF,$FE,$21,$E5,$FF,$FF
-        .byte   $FF,$FD
 ending_patchToPpu_typeBConcertHeight0:
         .byte   $23,$1A,$FF,$FE,$23,$39,$FF,$FF
         .byte   $FF,$FE,$23,$59,$FF,$FF,$FF,$FE
@@ -4962,9 +4954,9 @@ LA96E:  lda     #$00
         bcc     ending_selected
         lda     #$04
         sta     ending
-        lda     #$A8
+        lda     #>ending_patchToPpu_typeAOver120k
         sta     patchToPpuAddr+1
-        lda     #$CC
+        lda     #<ending_patchToPpu_typeAOver120k
         sta     patchToPpuAddr
         jsr     patchToPpu
 ending_selected:
@@ -5598,6 +5590,7 @@ soundEffectSlot1Init_table:
         .addr   soundEffectSlot1_rotateTetriminoInit
         .addr   soundEffectSlot1_levelUpInit
         .addr   soundEffectSlot1_lockTetriminoInit
+        .addr   soundEffectSlot1_chirpChirpInit
         .addr   soundEffectSlot1_lineClearingInit
         .addr   soundEffectSlot1_lineCompletedInit
 soundEffectSlot1Playing_table:
@@ -5976,6 +5969,8 @@ soundEffectSlot1_chirpChirpPlaying:
         ldy     #<soundEffectSlot1Playing_chirpChirpStage2
         jmp     copyToSq1Channel
 
+; Unused.
+soundEffectSlot1_chirpChirpInit:
 
 soundEffectSlot1_lockTetriminoInit:
         jsr     LE33B
@@ -7180,12 +7175,6 @@ music_endings_noiseScript:
 .code
 
 
-.segment        "unreferenced_data4": absolute
-
-.include "data/unreferenced_data4.asm"
-
-; End of "unreferenced_data4" segment
-.code
 
 
 .segment        "PRG_chunk3": absolute
