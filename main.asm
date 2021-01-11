@@ -3918,8 +3918,6 @@ highScoreCharToTile:
         .byte   $21,$22,$23,$00,$01,$02,$03,$04
         .byte   $05,$06,$07,$08,$09,$25,$4F,$5E
         .byte   $5F,$6E,$6F,$FF
-unreferenced_data7:
-        .byte   $00,$00,$00,$00
 ; maxes out at 49
 byteToBcdTable:
         .byte   $00,$01,$02,$03,$04,$05,$06,$07
@@ -4899,14 +4897,6 @@ ending_patchToPpu_typeBConcertHeight4:
         .byte   $20,$F9,$FF,$FF,$FF,$FE,$21,$19
         .byte   $FF,$FF,$FF,$FE,$21,$39,$FF,$FF
         .byte   $FF,$FD
-unreferenced_patchToPpu0:
-        .byte   $23,$35,$FF,$FF,$FF,$FE,$23,$55
-        .byte   $FF,$FF,$FF,$FE,$23,$75,$FF,$FF
-        .byte   $FF,$FD
-unreferenced_patchToPpu1:
-        .byte   $23,$39,$FF,$FF,$FF,$FE,$23,$59
-        .byte   $FF,$FF,$FF,$FE,$23,$79,$FF,$FF
-        .byte   $FF,$FD
 ending_patchToPpu_typeAOver120k:
         .byte   $22,$58,$FF,$FE,$22,$75,$FF,$FF
         .byte   $FF,$FF,$FF,$FF,$FE,$22,$94,$FF
@@ -4920,8 +4910,6 @@ ending_patchToPpu_typeAOver120k:
         .byte   $FF,$FF,$FF,$FF,$FF,$FF,$FE,$22
         .byte   $CA,$46,$47,$FE,$22,$EA,$56,$57
         .byte   $FD
-unreferenced_data6:
-        .byte   $FC
 LA926:  jsr     updateAudioWaitForNmiAndDisablePpuRendering
         jsr     disableNmi
         lda     #$02
@@ -5305,46 +5293,6 @@ diffOldAndNewButtons:
         bpl     @diffForPlayer
         rts
 
-unreferenced_func1:
-        jsr     pollController_actualRead
-LABD1:  ldy     newlyPressedButtons_player1
-        lda     newlyPressedButtons_player2
-        pha
-        jsr     pollController_actualRead
-        pla
-        cmp     newlyPressedButtons_player2
-        bne     LABD1
-        cpy     newlyPressedButtons_player1
-        bne     LABD1
-        beq     diffOldAndNewButtons
-        jsr     pollController_actualRead
-        jsr     addExpansionPortInputAsControllerInput
-LABEA:  ldy     newlyPressedButtons_player1
-        lda     newlyPressedButtons_player2
-        pha
-        jsr     pollController_actualRead
-        jsr     addExpansionPortInputAsControllerInput
-        pla
-        cmp     newlyPressedButtons_player2
-        bne     LABEA
-        cpy     newlyPressedButtons_player1
-        bne     LABEA
-        beq     diffOldAndNewButtons
-        jsr     pollController_actualRead
-        lda     tmp1
-        sta     heldButtons_player1
-        lda     tmp2
-        sta     heldButtons_player2
-        ldx     #$03
-LAC0D:  lda     newlyPressedButtons_player1,x
-        tay
-        eor     $F1,x
-        and     newlyPressedButtons_player1,x
-        sta     newlyPressedButtons_player1,x
-        sty     $F1,x
-        dex
-        bpl     LAC0D
-        rts
 
 memset_ppu_page_and_more:
         sta     tmp1
@@ -5577,6 +5525,52 @@ type_a_ending_nametable:
 
 .include "data/demo_data.asm"
 
+.byte $00,$00,$00,$00 ; ???????????????????? But it's necessary
+
+; Referenced by initSoundEffectShared
+soundEffectSlot0_gameOverCurtainInitData:
+        .byte   $1F,$7F,$0F,$C0
+soundEffectSlot0_endingRocketInitData:
+        .byte   $08,$7F,$0E,$C0
+; Referenced at LE20F
+unknown_sq1_data1:
+        .byte   $9D,$7F,$7A,$28
+; Referenced at LE20F
+unknown_sq1_data2:
+        .byte   $9D,$7F,$40,$28
+soundEffectSlot1_rotateTetriminoInitData:
+        .byte   $9E,$7F,$C0,$28
+soundEffectSlot1Playing_rotateTetriminoStage3:
+        .byte   $B2,$7F,$C0,$08
+soundEffectSlot1_levelUpInitData:
+        .byte   $DE,$7F,$A8,$18
+soundEffectSlot1_lockTetriminoInitData:
+        .byte   $9F,$84,$FF,$0B
+soundEffectSlot1_menuOptionSelectInitData:
+        .byte   $DB,$7F,$40,$28
+soundEffectSlot1Playing_menuOptionSelectStage2:
+        .byte   $D2,$7F,$40,$28
+soundEffectSlot1_menuScreenSelectInitData:
+        .byte   $D9,$7F,$84,$28
+soundEffectSlot1_tetrisAchievedInitData:
+        .byte   $9E,$9D,$C0,$08
+soundEffectSlot1_lineCompletedInitData:
+        .byte   $9C,$9A,$A0,$09
+soundEffectSlot1_lineClearingInitData:
+        .byte   $9E,$7F,$69,$08
+soundEffectSlot1_chirpChirpInitData:
+        .byte   $96,$7F,$36,$20
+soundEffectSlot1Playing_chirpChirpStage2:
+        .byte   $82,$7F,$30,$F8
+soundEffectSlot1_shiftTetriminoInitData:
+        .byte   $98,$7F,$80,$38
+soundEffectSlot3_unknown1InitData:
+        .byte   $30,$7F,$70,$08
+soundEffectSlot3_unknown2InitData:
+        .byte   $03,$7F,$3D,$18
+soundEffectSlot1_chirpChirpSq1Vol_table:
+        .byte   $14,$93,$94,$D3
+
 ; canon is updateAudio
 updateAudio_jmp:
         jmp     updateAudio
@@ -5604,7 +5598,6 @@ soundEffectSlot1Init_table:
         .addr   soundEffectSlot1_rotateTetriminoInit
         .addr   soundEffectSlot1_levelUpInit
         .addr   soundEffectSlot1_lockTetriminoInit
-        .addr   soundEffectSlot1_chirpChirpInit
         .addr   soundEffectSlot1_lineClearingInit
         .addr   soundEffectSlot1_lineCompletedInit
 soundEffectSlot1Playing_table:
@@ -5619,16 +5612,26 @@ soundEffectSlot1Playing_table:
         .addr   soundEffectSlot1_lineClearingPlaying
         .addr   soundEffectSlot1_lineCompletedPlaying
 soundEffectSlot3Init_table:
-        .addr   soundEffectSlot3_fallingAlien
-        .addr   soundEffectSlot3_donk
+        ; .addr   soundEffectSlot3_fallingAlien
+        ; .addr   soundEffectSlot3_donk
 soundEffectSlot3Playing_table:
         .addr   updateSoundEffectSlot3_apu
         .addr   soundEffectSlot3Playing_advance
 ; Referenced by unused slot 4 as well
 soundEffectSlot2Init_table:
         .addr   soundEffectSlot2_makesNoSound
-        .addr   soundEffectSlot2_lowBuzz
-        .addr   soundEffectSlot2_mediumBuzz
+; See getSoundEffectNoiseNibble
+noiselo_table:
+        .byte   $7A,$DE,$FF,$EF,$FD,$DF,$FE,$EF
+        .byte   $EF,$FD,$EF,$FE,$DF,$FF,$EE,$EE
+        .byte   $FF,$EF,$FF,$FF,$FF,$EF,$EF,$FF
+        .byte   $FD,$DF,$DF,$EF,$FE,$DF,$EF,$FF
+; Similar to noiselo_table. Nibble set to NOISE_VOL bits 0-3 with bit 4 set to 1
+noisevol_table:
+        .byte   $BF,$FF,$EE,$EF,$EF,$EF,$DF,$FB
+        .byte   $BB,$AA,$AA,$99,$98,$87,$76,$66
+        .byte   $55,$44,$44,$44,$44,$43,$33,$33
+        .byte   $22,$22,$22,$22,$21,$11,$11,$11
 ; input y: $E100+y source addr
 copyToSq1Channel:
         lda     #$00
@@ -5690,20 +5693,6 @@ computeSoundEffMethod:
         sta     AUDIOTMP4
         jmp     @ret
 
-unreferenced_soundRng:
-        lda     $EB
-        and     #$02
-        sta     $06FF
-        lda     $EC
-        and     #$02
-        eor     $06FF
-        clc
-        beq     @insertRandomBit
-        sec
-@insertRandomBit:
-        ror     $EB
-        ror     $EC
-        rts
 
 ; Z=0 when returned means disabled
 advanceAudioSlotFrame:
@@ -5716,70 +5705,6 @@ advanceAudioSlotFrame:
         sta     soundEffectSlot0FrameCounter,x
 @ret:   rts
 
-unreferenced_data3:
-        .byte   $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-        .byte   $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-        .byte   $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-        .byte   $00,$00,$00,$00,$00,$00,$00,$00
-        .byte   $00,$00,$00,$00,$00,$00,$00,$00
-        .byte   $00,$00,$00,$00,$00,$00,$00,$00
-        .byte   $00,$00,$00,$00,$00,$00,$00,$00
-        .byte   $03,$7F,$0F,$C0
-; Referenced by initSoundEffectShared
-soundEffectSlot0_gameOverCurtainInitData:
-        .byte   $1F,$7F,$0F,$C0
-soundEffectSlot0_endingRocketInitData:
-        .byte   $08,$7F,$0E,$C0
-; Referenced at LE20F
-unknown_sq1_data1:
-        .byte   $9D,$7F,$7A,$28
-; Referenced at LE20F
-unknown_sq1_data2:
-        .byte   $9D,$7F,$40,$28
-soundEffectSlot1_rotateTetriminoInitData:
-        .byte   $9E,$7F,$C0,$28
-soundEffectSlot1Playing_rotateTetriminoStage3:
-        .byte   $B2,$7F,$C0,$08
-soundEffectSlot1_levelUpInitData:
-        .byte   $DE,$7F,$A8,$18
-soundEffectSlot1_lockTetriminoInitData:
-        .byte   $9F,$84,$FF,$0B
-soundEffectSlot1_menuOptionSelectInitData:
-        .byte   $DB,$7F,$40,$28
-soundEffectSlot1Playing_menuOptionSelectStage2:
-        .byte   $D2,$7F,$40,$28
-soundEffectSlot1_menuScreenSelectInitData:
-        .byte   $D9,$7F,$84,$28
-soundEffectSlot1_tetrisAchievedInitData:
-        .byte   $9E,$9D,$C0,$08
-soundEffectSlot1_lineCompletedInitData:
-        .byte   $9C,$9A,$A0,$09
-soundEffectSlot1_lineClearingInitData:
-        .byte   $9E,$7F,$69,$08
-soundEffectSlot1_chirpChirpInitData:
-        .byte   $96,$7F,$36,$20
-soundEffectSlot1Playing_chirpChirpStage2:
-        .byte   $82,$7F,$30,$F8
-soundEffectSlot1_shiftTetriminoInitData:
-        .byte   $98,$7F,$80,$38
-soundEffectSlot3_unknown1InitData:
-        .byte   $30,$7F,$70,$08
-soundEffectSlot3_unknown2InitData:
-        .byte   $03,$7F,$3D,$18
-soundEffectSlot1_chirpChirpSq1Vol_table:
-        .byte   $14,$93,$94,$D3
-; See getSoundEffectNoiseNibble
-noiselo_table:
-        .byte   $7A,$DE,$FF,$EF,$FD,$DF,$FE,$EF
-        .byte   $EF,$FD,$EF,$FE,$DF,$FF,$EE,$EE
-        .byte   $FF,$EF,$FF,$FF,$FF,$EF,$EF,$FF
-        .byte   $FD,$DF,$DF,$EF,$FE,$DF,$EF,$FF
-; Similar to noiselo_table. Nibble set to NOISE_VOL bits 0-3 with bit 4 set to 1
-noisevol_table:
-        .byte   $BF,$FF,$EE,$EF,$EF,$EF,$DF,$FB
-        .byte   $BB,$AA,$AA,$99,$98,$87,$76,$66
-        .byte   $55,$44,$44,$44,$44,$43,$33,$33
-        .byte   $22,$22,$22,$22,$21,$11,$11,$11
 updateSoundEffectSlot2:
         ldx     #$02
         lda     #<soundEffectSlot2Init_table
@@ -5789,11 +5714,6 @@ updateSoundEffectSlot3:
         ldx     #$03
         lda     #<soundEffectSlot3Init_table
         ldy     #<soundEffectSlot3Playing_table
-        bne     updateSoundEffectSlotShared
-updateSoundEffectSlot4_unused:
-        ldx     #$04
-        lda     #<soundEffectSlot2Init_table
-        ldy     #<soundEffectSlot2Init_table
         bne     updateSoundEffectSlotShared
 updateSoundEffectSlot1:
         lda     soundEffectSlot4Playing
@@ -5978,9 +5898,6 @@ stopSoundEffectSlot0:
 updateSoundEffectSlot0WithoutUpdate_ret:
         rts
 
-unreferenced_code2:
-        lda     #$02
-        sta     currentAudioSlot
 soundEffectSlot0_gameOverCurtainInit:
         lda     #$40
         ldy     #<soundEffectSlot0_gameOverCurtainInitData
@@ -6004,7 +5921,7 @@ updateSoundEffectNoiseAudio:
 ; Loads from noiselo_table(x=$54)/noisevol_table(x=$74)
 getSoundEffectNoiseNibble:
         stx     AUDIOTMP1
-        ldy     #>soundEffectSlot0_gameOverCurtainInitData
+        ldy     #>noiselo_table
         sty     AUDIOTMP2
         ldx     soundEffectSlot0SecondaryCounter
         txa
@@ -6059,10 +5976,6 @@ soundEffectSlot1_chirpChirpPlaying:
         ldy     #<soundEffectSlot1Playing_chirpChirpStage2
         jmp     copyToSq1Channel
 
-; Unused.
-soundEffectSlot1_chirpChirpInit:
-        ldy     #<soundEffectSlot1_chirpChirpInitData
-        jmp     initSoundEffectShared
 
 soundEffectSlot1_lockTetriminoInit:
         jsr     LE33B
@@ -6260,32 +6173,7 @@ unknown18_table:
         .byte   $69,$A8,$69,$A8,$8D,$53,$8D,$53
         .byte   $8D,$00,$A9,$10,$8D,$04,$40,$A9
         .byte   $00,$8D,$C9,$06,$8D,$FA,$06,$60
-; Unused
-soundEffectSlot2_mediumBuzz:
-        .byte   $A9,$3F,$A0,$60,$A2,$0F
-        bne     LE51B
-; Unused
-soundEffectSlot2_lowBuzz:
-        lda     #$3F
-        ldy     #$60
-        ldx     #$0E
-        bne     LE51B
-LE51B:  sta     DMC_LEN
-        sty     DMC_START
-        stx     DMC_FREQ
-        lda     #$0F
-        sta     SND_CHN
-        lda     #$00
-        sta     DMC_RAW
-        lda     #$1F
-        sta     SND_CHN
-        rts
 
-; Unused
-soundEffectSlot3_donk:
-        lda     #$02
-        ldy     #<soundEffectSlot3_unknown2InitData
-        jmp     initSoundEffectShared
 
 soundEffectSlot3Playing_advance:
         jsr     advanceAudioSlotFrame
@@ -6313,14 +6201,6 @@ updateSoundEffectSlot3_apu:
         sta     TRI_HI
         rts
 
-; Unused
-soundEffectSlot3_fallingAlien:
-        lda     #$06
-        ldy     #<soundEffectSlot3_unknown1InitData
-        jsr     initSoundEffectShared
-        lda     soundEffectSlot3_unknown1InitData+2
-        sta     soundEffectSlot3TertiaryCounter
-        rts
 
 trilo_table:
         .byte   $72,$74,$77,$00
@@ -6794,10 +6674,6 @@ updateMusicFrame_updateChannel:
         sta     musicChanVolume,x
         jmp     @processChannelInstruction
 
-@unreferenced_code3:
-        jsr     musicGetNextInstructionByte
-        jsr     musicGetNextInstructionByte
-        jmp     @processChannelInstruction
 
 @setDurationOffset:
         jsr     musicGetNextInstructionByte
