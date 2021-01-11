@@ -5500,25 +5500,6 @@ type_b_ending_nametable:
 type_a_ending_nametable:
         .incbin "gfx/nametables/type_a_ending_nametable.bin"
 
-; End of "PRG_chunk1" segment
-.code
-
-
-; .segment        "unreferenced_data1": absolute
-;
-; unreferenced_data1:
-;         .incbin "data/unreferenced_data1.bin"
-;
-; ; End of "unreferenced_data1" segment
-; .code
-
-
-.segment        "PRG_chunk2": absolute
-
-.include "data/demo_data.asm"
-
-.byte $00,$00,$00,$00 ; ???????????????????? But it's necessary
-
 ; Referenced by initSoundEffectShared
 soundEffectSlot0_gameOverCurtainInitData:
         .byte   $1F,$7F,$0F,$C0
@@ -5562,16 +5543,6 @@ soundEffectSlot3_unknown2InitData:
         .byte   $03,$7F,$3D,$18
 soundEffectSlot1_chirpChirpSq1Vol_table:
         .byte   $14,$93,$94,$D3
-
-; canon is updateAudio
-updateAudio_jmp:
-        jmp     updateAudio
-
-; canon is updateAudio
-updateAudio2:
-        jmp     soundEffectSlot2_makesNoSound
-
-LE006:  jmp     LE1D8
 
 ; Referenced via updateSoundEffectSlotShared
 soundEffectSlot0Init_table:
@@ -5625,6 +5596,30 @@ noisevol_table:
         .byte   $BB,$AA,$AA,$99,$98,$87,$76,$66
         .byte   $55,$44,$44,$44,$44,$43,$33,$33
         .byte   $22,$22,$22,$22,$21,$11,$11,$11
+
+; End of "PRG_chunk1" segment
+.code
+
+.segment        "PRG_chunk2": absolute
+
+.include "data/demo_data.asm"
+
+; ???????????????????? But it's necessary
+; .byte $00
+
+
+
+; canon is updateAudio
+updateAudio_jmp:
+        jmp     updateAudio
+
+; canon is updateAudio
+updateAudio2:
+        jmp     soundEffectSlot2_makesNoSound
+
+LE006:  jmp     LE1D8
+
+
 ; input y: $E100+y source addr
 copyToSq1Channel:
         lda     #$00
@@ -7089,11 +7084,6 @@ music_music3_triScript:
         .addr   music_music3_triRoutine1
         .addr   LFFFF
         .addr   music_music3_triScript
-; unreferenced
-music_music3_noiseScript:
-        .addr   music_music3_noiseRoutine1
-        .addr   LFFFF
-        .addr   music_music3_noiseScript
 .include "audio/music/music3.asm"
 music_congratulations_sq1Script:
         .addr   music_congratulations_sq1Routine1
@@ -7204,7 +7194,6 @@ reset:  cld
         jsr     changePRGBank
         jmp     initRam
 
-.include "data/unreferenced_data5.asm"
 MMC1_PRG:
         .byte   $00,$00,$00,$00,$00,$00,$00,$00
         .byte   $00
