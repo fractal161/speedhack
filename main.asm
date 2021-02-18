@@ -5604,10 +5604,6 @@ noisevol_table:
 
 .include "data/demo_data.asm"
 
-; ???????????????????? But it's necessary
-; .byte $00
-
-
 
 ; canon is updateAudio
 updateAudio_jmp:
@@ -5754,7 +5750,7 @@ LE1EF:  lda     audioInitialized
         cmp     #$03
         bne     LE212
         inc     $068B
-        ldy     #$10
+        ldy     #<unknown_sq1_data2
         lda     $068B
         and     #$01
         bne     LE20F

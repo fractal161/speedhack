@@ -1,10 +1,6 @@
 # Tetris
 
-This is a disassembly of Tetris (NES).
-
-It builds the following rom:
-
-* Tetris (U) [!].nes `md5: ec58574d96bee8c8927884ae6e7a2508`
+This is a disassembly of Tetris (NES) that has also been stripped of unnecessary and unreferenced code/data.
 
 To set up the repository, see [**INSTALL.md**](INSTALL.md).
 

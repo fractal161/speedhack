@@ -185,7 +185,7 @@ musicChanNoteDurationRemaining:	.res $04	; $06B4
 musicChanNoteDuration:	.res $04	; $06B8
 musicChanProgLoopCounter:	.res $04	; $06BC
 musicStagingSq1Sweep:	.res $02	; $06C0
-.res 2
+.res 1
 musicChanNote:  .res 4  ; $06C3
 .res 1
 musicChanInhibit:	.res $03	; $06C8
