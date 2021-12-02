@@ -5480,6 +5480,11 @@ soundEffectSlot3_unknown2InitData:
 soundEffectSlot1_chirpChirpSq1Vol_table:
         .byte   $14,$93,$94,$D3
 
+; End of "PRG_chunk1" segment
+.code
+
+.segment        "PRG_chunk1a": absolute
+
 ; Referenced via updateSoundEffectSlotShared
 soundEffectSlot0Init_table:
         .addr   soundEffectSlot0_makesNoSound
@@ -5533,7 +5538,7 @@ noisevol_table:
         .byte   $55,$44,$44,$44,$44,$43,$33,$33
         .byte   $22,$22,$22,$22,$21,$11,$11,$11
 
-; End of "PRG_chunk1" segment
+; End of "PRG_chunk1a" segment
 .code
 
 .segment        "PRG_chunk2": absolute
