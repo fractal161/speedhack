@@ -2354,7 +2354,7 @@ render_mode_play_and_demo:
         sta     player1_playState
         lda     #$00
         sta     player1_vramRow
-        jmp     @renderPlayer2Playfield
+        jmp     @renderLines
 
 @playStateNotDisplayLineClearingAnimation:
         lda     player1_vramRow
@@ -2367,47 +2367,7 @@ render_mode_play_and_demo:
         jsr     copyPlayfieldRowToVRAM
         lda     vramRow
         sta     player1_vramRow
-@renderPlayer2Playfield:
-        lda     numberOfPlayers
-        cmp     #$02
-        bne     @renderLines
-        lda     player2_playState
-        cmp     #$04
-        bne     @player2PlayStateNotDisplayLineClearingAnimation
-        lda     #$05
-        sta     playfieldAddr+1
-        lda     player2_rowY
-        sta     rowY
-        lda     player2_completedRow
-        sta     completedRow
-        lda     player2_completedRow+1
-        sta     completedRow+1
-        lda     player2_completedRow+2
-        sta     completedRow+2
-        lda     player2_completedRow+3
-        sta     completedRow+3
-        lda     player2_playState
-        sta     playState
-        jsr     updateLineClearingAnimation
-        lda     rowY
-        sta     player2_rowY
-        lda     playState
-        sta     player2_playState
-        lda     #$00
-        sta     player2_vramRow
-        jmp     @renderLines
 
-@player2PlayStateNotDisplayLineClearingAnimation:
-        lda     player2_vramRow
-        sta     vramRow
-        lda     #$05
-        sta     playfieldAddr+1
-        jsr     copyPlayfieldRowToVRAM
-        jsr     copyPlayfieldRowToVRAM
-        jsr     copyPlayfieldRowToVRAM
-        jsr     copyPlayfieldRowToVRAM
-        lda     vramRow
-        sta     player2_vramRow
 @renderLines:
         lda     outOfDateRenderFlags
         and     #$01
@@ -2793,12 +2753,6 @@ playState_spawnNextTetrimino:
         lda     spawnOrientationFromOrientation,x
         sta     currentPiece
         jsr     incrementPieceStat
-        lda     numberOfPlayers
-        cmp     #$01
-        beq     @onePlayerPieceSelection
-        lda     nextPiece_2player
-        sta     nextPiece
-        jmp     @resetDownHold
 
 @onePlayerPieceSelection:
         jsr     chooseNextTetrimino
@@ -3004,9 +2958,6 @@ playState_updateGameOverCurtain:
 @ret:   rts
 
 @curtainFinished:
-        lda     numberOfPlayers
-        cmp     #$02
-        beq     @exitGame
         lda     player1_score+2
         cmp     #$03
         bcc     @checkForStartButton
@@ -3393,9 +3344,6 @@ gameModeState_handleGameOver:
 @onePlayerGameOver:
         lda     #$03
         sta     renderMode
-        lda     numberOfPlayers
-        cmp     #$01
-        bne     @resetGameState
         jsr     handleHighScoreIfNecessary
 @resetGameState:
         lda     #$01
