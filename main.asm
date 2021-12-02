@@ -436,13 +436,6 @@ gameModeState_updatePlayer1:
         rts
 
 gameModeState_updatePlayer2:
-        lda     numberOfPlayers
-        cmp     #$02
-        bne     @ret
-        jsr     makePlayer2Active
-        jsr     branchOnPlayStatePlayer2
-        jsr     stageSpriteForCurrentPiece
-        jsr     savePlayer2State
 @ret:   inc     gameModeState
         rts
 
@@ -1240,13 +1233,6 @@ savePlayer1State:
         dex
         cpx     #$FF
         bne     @copyByteToMirror
-        lda     numberOfPlayers
-        cmp     #$01
-        beq     @ret
-        ldx     pendingGarbage
-        lda     pendingGarbageInactivePlayer
-        sta     pendingGarbage
-        stx     pendingGarbageInactivePlayer
 @ret:   rts
 
 ; Copies $40 to $80
@@ -1552,20 +1538,7 @@ stageSpriteForCurrentPiece:
         asl     a
         adc     #$60
         sta     generalCounter3
-        lda     numberOfPlayers
-        cmp     #$01
-        beq     L8A2C
-        lda     generalCounter3
-        sec
-        sbc     #$40
-        sta     generalCounter3
-        lda     activePlayer
-        cmp     #$01
-        beq     L8A2C
-        lda     generalCounter3
-        adc     #$6F
-        sta     generalCounter3
-L8A2C:  clc
+        clc
         lda     tetriminoY
         rol     a
         rol     a
@@ -2537,26 +2510,6 @@ copyPlayfieldRowToVRAM:
         lda     vramPlayfieldRows,x
         sta     PPUADDR
         dex
-        lda     numberOfPlayers
-        cmp     #$01
-        beq     @onePlayer
-        lda     playfieldAddr+1
-        cmp     #$05
-        beq     @playerTwo
-        lda     vramPlayfieldRows,x
-        sec
-        sbc     #$02
-        sta     PPUADDR
-        jmp     @copyRow
-
-@playerTwo:
-        lda     vramPlayfieldRows,x
-        clc
-        adc     #$0C
-        sta     PPUADDR
-        jmp     @copyRow
-
-@onePlayer:
         lda     vramPlayfieldRows,x
         clc
         adc     #$06
@@ -2590,31 +2543,10 @@ updateLineClearingAnimation:
         asl     a
         tay
         lda     vramPlayfieldRows,y
-        sta     generalCounter
-        lda     numberOfPlayers
-        cmp     #$01
-        bne     @twoPlayers
-        lda     generalCounter
         clc
         adc     #$06
         sta     generalCounter
         jmp     @updateVRAM
-
-@twoPlayers:
-        lda     playfieldAddr+1
-        cmp     #$04
-        bne     @player2
-        lda     generalCounter
-        sec
-        sbc     #$02
-        sta     generalCounter
-        jmp     @updateVRAM
-
-@player2:
-        lda     generalCounter
-        clc
-        adc     #$0C
-        sta     generalCounter
 @updateVRAM:
         iny
         lda     vramPlayfieldRows,y
@@ -2720,27 +2652,6 @@ playState_spawnNextTetrimino:
         lda     vramRow
         cmp     #$20
         bmi     @ret
-        lda     numberOfPlayers
-        cmp     #$01
-        beq     @notDelaying
-        lda     twoPlayerPieceDelayCounter
-        cmp     #$00
-        bne     @twoPlayerPieceDelay
-        inc     twoPlayerPieceDelayCounter
-        lda     activePlayer
-        sta     twoPlayerPieceDelayPlayer
-        jsr     chooseNextTetrimino
-        sta     nextPiece_2player
-        jmp     @ret
-
-@twoPlayerPieceDelay:
-        lda     twoPlayerPieceDelayPlayer
-        cmp     activePlayer
-        bne     @ret
-        lda     twoPlayerPieceDelayCounter
-        cmp     #$1C
-        bne     @ret
-@notDelaying:
         lda     #$00
         sta     twoPlayerPieceDelayCounter
         sta     fallTimer
@@ -3069,49 +2980,6 @@ playState_checkForCompletedRows:
 @ret:   rts
 
 playState_receiveGarbage:
-        lda     numberOfPlayers
-        cmp     #$01
-        beq     @ret
-        ldy     pendingGarbage
-        beq     @ret
-        lda     vramRow
-        cmp     #$20
-        bmi     @delay
-        lda     multBy10Table,y
-        sta     generalCounter2
-        lda     #$00
-        sta     generalCounter
-@shiftPlayfieldUp:
-        ldy     generalCounter2
-        lda     (playfieldAddr),y
-        ldy     generalCounter
-        sta     (playfieldAddr),y
-        inc     generalCounter
-        inc     generalCounter2
-        lda     generalCounter2
-        cmp     #$C8
-        bne     @shiftPlayfieldUp
-        iny
-        ldx     #$00
-@fillGarbage:
-        cpx     garbageHole
-        beq     @hole
-        lda     #$78
-        jmp     @set
-@hole:
-        lda     #$FF
-@set:
-        sta     (playfieldAddr),y
-        inx
-        cpx     #$0A
-        bne     @inc
-        ldx     #$00
-@inc:   iny
-        cpy     #$C8
-        bne     @fillGarbage
-        lda     #$00
-        sta     pendingGarbage
-        sta     vramRow
 @ret:  inc     playState
 @delay:  rts
 
@@ -3334,14 +3202,6 @@ gameModeState_handleGameOver:
         cmp     #$00
         bne     @ret
 @gameOver:
-        lda     numberOfPlayers
-        cmp     #$01
-        beq     @onePlayerGameOver
-        lda     #$09
-        sta     gameModeState
-        rts
-
-@onePlayerGameOver:
         lda     #$03
         sta     renderMode
         jsr     handleHighScoreIfNecessary
@@ -3765,12 +3625,6 @@ L9FE9:  ldy     #$00
         rts
 
 showHighScores:
-        lda     numberOfPlayers
-        cmp     #$01
-        beq     showHighScores_real
-        jmp     showHighScores_ret
-
-showHighScores_real:
         jsr     bulkCopyToPpu      ;not using @-label due to MMC1_Control in PAL
 MMC1_Control    := * + 1
         .addr   high_scores_nametable
