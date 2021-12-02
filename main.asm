@@ -2412,9 +2412,6 @@ render_mode_play_and_demo:
         lda     outOfDateRenderFlags
         and     #$01
         beq     @renderLevel
-        lda     numberOfPlayers
-        cmp     #$02
-        beq     @renderLinesTwoPlayers
         lda     #$20
         sta     PPUADDR
         lda     #$73
@@ -2452,9 +2449,6 @@ render_mode_play_and_demo:
         lda     outOfDateRenderFlags
         and     #$02
         beq     @renderScore
-        lda     numberOfPlayers
-        cmp     #$02
-        beq     @renderScore
         ldx     player1_levelNumber
         lda     levelDisplayTable,x
         sta     generalCounter
@@ -2469,9 +2463,6 @@ render_mode_play_and_demo:
         and     #$FD
         sta     outOfDateRenderFlags
 @renderScore:
-        lda     numberOfPlayers
-        cmp     #$02
-        beq     @renderStats
         lda     outOfDateRenderFlags
         and     #$04
         beq     @renderStats
@@ -2489,9 +2480,6 @@ render_mode_play_and_demo:
         and     #$FB
         sta     outOfDateRenderFlags
 @renderStats:
-        lda     numberOfPlayers
-        cmp     #$02
-        beq     @renderTetrisFlashAndSound
         lda     outOfDateRenderFlags
         and     #$40
         beq     @renderTetrisFlashAndSound
