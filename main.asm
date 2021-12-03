@@ -402,11 +402,11 @@ branchOnGameMode:
         .addr   gameMode_playAndEndingHighScore_jmp
         .addr   gameMode_playAndEndingHighScore_jmp
         .addr   gameMode_startDemo
-gameModeState_updatePlayer1:
-        jsr     makePlayer1Active
-        jsr     branchOnPlayStatePlayer1
+gameModeState_updatePlayer:
+        jsr     makePlayerActive
+        jsr     branchOnPlayStatePlayer
         jsr     stageSpriteForCurrentPiece
-        jsr     savePlayer1State
+        jsr     savePlayerState
         jsr     stageSpriteForNextPiece
         inc     gameModeState
         rts
@@ -422,12 +422,12 @@ gameMode_playAndEndingHighScore:
         .addr   gameModeState_initGameState
         .addr   gameModeState_updateCountersAndNonPlayerState
         .addr   gameModeState_handleGameOver
-        .addr   gameModeState_updatePlayer1
+        .addr   gameModeState_updatePlayer
         .addr   gameModeState_noop
         .addr   gameModeState_checkForResetKeyCombo
         .addr   gameModeState_startButtonHandling
         .addr   gameModeState_vblankThenRunState2
-branchOnPlayStatePlayer1:
+branchOnPlayStatePlayer:
         lda     playState
         jsr     switch_s_plus_2a
         .addr   playState_unassignOrientationId
@@ -728,13 +728,13 @@ gameMode_levelMenu:
 @forceStartLevelToRange:
         lda     player1_startLevel
         cmp     #$0A
-        bcc     gameMode_levelMenu_processPlayer1Navigation
+        bcc     gameMode_levelMenu_processPlayerNavigation
         sec
         sbc     #$0A
         sta     player1_startLevel
         jmp     @forceStartLevelToRange
 
-gameMode_levelMenu_processPlayer1Navigation:
+gameMode_levelMenu_processPlayerNavigation:
         lda     #$00
         sta     activePlayer
         lda     player1_startLevel
@@ -798,7 +798,7 @@ gameMode_levelMenu_processPlayer1Navigation:
         bpl     @chooseRandomHole_2
         sta     player1_garbageHole
         jsr     updateAudioWaitForNmiAndResetOamStaging
-        jmp     gameMode_levelMenu_processPlayer1Navigation
+        jmp     gameMode_levelMenu_processPlayerNavigation
 
 ; Starts by checking if right pressed
 gameMode_levelMenu_handleLevelHeightNavigation:
@@ -1127,7 +1127,7 @@ gameModeState_initGameState:
         rts
 
 ; Copies $60 to $40
-makePlayer1Active:
+makePlayerActive:
         lda     #$01
         sta     activePlayer
         lda     #$04
@@ -1146,7 +1146,7 @@ makePlayer1Active:
         rts
 
 ; Copies $40 to $60
-savePlayer1State:
+savePlayerState:
         ldx     #$1F
 @copyByteToMirror:
         lda     tetriminoX,x
