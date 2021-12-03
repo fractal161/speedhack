@@ -351,7 +351,7 @@ initRamContinued:
         jsr     LAA82
         lda     #$EF
         ldx     #$04
-        ldy     #$05
+        ldy     #$04
         jsr     memset_page
         jsr     waitForVBlankAndEnableNmi
         jsr     updateAudioWaitForNmiAndResetOamStaging
@@ -774,8 +774,6 @@ gameMode_levelMenu_processPlayerNavigation:
         rts
 
 @chooseRandomHole_1:
-        ldx     #$17
-        ldy     #$02
         jsr     generateNextPseudorandomNumber
         lda     rng_seed
         and     #$0F
@@ -783,8 +781,6 @@ gameMode_levelMenu_processPlayerNavigation:
         bpl     @chooseRandomHole_1
         sta     player1_garbageHole
 @chooseRandomHole_2:
-        ldx     #$17
-        ldy     #$02
         jsr     generateNextPseudorandomNumber
         lda     rng_seed
         and     #$0F
@@ -1099,8 +1095,6 @@ gameModeState_initGameState:
         jsr     chooseNextTetrimino
         sta     player1_currentPiece
         jsr     incrementPieceStat
-        ldx     #$17
-        ldy     #$02
         jsr     generateNextPseudorandomNumber
         jsr     chooseNextTetrimino
         sta     nextPiece
@@ -1164,9 +1158,7 @@ L87E7:  lda     generalCounter
         sta     player1_vramRow
         lda     #$09
         sta     generalCounter3
-L87FC:  ldx     #$17
-        ldy     #$02
-        jsr     generateNextPseudorandomNumber
+L87FC:  jsr     generateNextPseudorandomNumber
         lda     rng_seed
         and     #$07
         tay
@@ -1184,9 +1176,7 @@ L87FC:  ldx     #$17
         dec     generalCounter3
         jmp     L87FC
 
-L8824:  ldx     #$17
-        ldy     #$02
-        jsr     generateNextPseudorandomNumber
+L8824:  jsr     generateNextPseudorandomNumber
         lda     rng_seed
         and     #$0F
         cmp     #$0A
@@ -2548,8 +2538,6 @@ pickRandomTetrimino:
         cmp     spawnID
         bne     useNewSpawnID
 @invalidIndex:
-        ldx     #$17
-        ldy     #$02
         jsr     generateNextPseudorandomNumber
         lda     rng_seed
         and     #$07
@@ -3046,7 +3034,7 @@ gameModeState_handleGameOver:
         sta     player1_playState
         lda     #$EF
         ldx     #$04
-        ldy     #$05
+        ldy     #$04
         jsr     memset_page
         lda     #$00
         sta     player1_vramRow
@@ -4792,6 +4780,8 @@ copyAddrAtReturnAddressToTmp_incrReturnAddrBy2:
 
 ;reg x: zeropage addr of seed; reg y: size of seed
 generateNextPseudorandomNumber:
+        ldx     #$17
+        ldy     #$02
         lda     tmp1,x
         and     #$02
         sta     tmp1
@@ -4817,8 +4807,7 @@ copyOamStagingToOam:
         rts
 
 pollController_actualRead:
-        ldx     joy1Location
-        inx
+        ldx     #$01
         stx     JOY1
         dex
         stx     JOY1
@@ -4833,26 +4822,15 @@ pollController_actualRead:
         bne     @readNextBit
         rts
 
-addExpansionPortInputAsControllerInput:
-        lda     tmp1
-        ora     newlyPressedButtons
-        sta     newlyPressedButtons
-        rts
-
-        jsr     pollController_actualRead
-        beq     diffOldAndNewButtons
 pollController:
         jsr     pollController_actualRead
-        jsr     addExpansionPortInputAsControllerInput
         lda     newlyPressedButtons
         sta     generalCounter2
         jsr     pollController_actualRead
-        jsr     addExpansionPortInputAsControllerInput
         lda     newlyPressedButtons
         and     generalCounter2
         sta     newlyPressedButtons
 diffOldAndNewButtons:
-        lda     newlyPressedButtons
         tay
         eor     heldButtons
         and     newlyPressedButtons
