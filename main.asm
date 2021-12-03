@@ -3112,9 +3112,6 @@ pollControllerButtons:
         rts
 
 @demoGameMode:
-        lda     $D0
-        cmp     #$FF
-        beq     @recording
         jsr     pollController
         lda     newlyPressedButtons_player1
         cmp     #$10
@@ -3159,33 +3156,6 @@ pollControllerButtons:
         sta     frameCounter+1
         lda     #$01
         sta     gameMode
-        rts
-
-@recording:
-        jsr     pollController
-        lda     gameMode
-        cmp     #$05
-        bne     @ret2
-        lda     $D0
-        cmp     #$FF
-        bne     @ret2
-        lda     heldButtons_player1
-        cmp     demo_heldButtons
-        beq     @buttonsNotChanged
-        ldx     #$00
-        lda     demo_heldButtons
-        sta     (demoButtonsAddr,x)
-        jsr     demoButtonsTable_indexIncr
-        lda     demo_repeats
-        sta     (demoButtonsAddr,x)
-        jsr     demoButtonsTable_indexIncr
-        lda     demoButtonsAddr+1
-        cmp     #>demoTetriminoTypeTable
-        beq     @ret2
-        lda     heldButtons_player1
-        sta     demo_heldButtons
-        lda     #$00
-        sta     demo_repeats
         rts
 
 @buttonsNotChanged:
