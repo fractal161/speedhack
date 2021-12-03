@@ -384,10 +384,6 @@ gameModeState_updatePlayer:
         inc     gameModeState
         rts
 
-gameModeState_noop:
-        inc     gameModeState
-        rts
-
 gameMode_playAndEndingHighScore:
         lda     gameModeState
         jsr     switch_s_plus_2a
@@ -396,7 +392,6 @@ gameMode_playAndEndingHighScore:
         .addr   gameModeState_updateCountersAndNonPlayerState
         .addr   gameModeState_handleGameOver
         .addr   gameModeState_updatePlayer
-        .addr   gameModeState_noop
         .addr   gameModeState_checkForResetKeyCombo
         .addr   gameModeState_startButtonHandling
         .addr   gameModeState_vblankThenRunState2
@@ -4874,14 +4869,6 @@ switch_s_plus_2a:
         stx     tmp1
         jmp     (tmp1)
 
-        sei
-        inc     initRam
-        lda     #$1A
-        jsr     setMMC1Control
-        rts
-
-        rts
-
 setMMC1Control:
         sta     MMC1_Control
         lsr     a
@@ -5013,6 +5000,11 @@ type_b_ending_nametable:
 type_a_ending_nametable:
         .incbin "gfx/nametables/type_a_ending_nametable.bin"
 
+; End of "PRG_chunk1" segment
+.code
+
+.segment        "PRG_chunk1a": absolute
+
 ; Referenced by initSoundEffectShared
 soundEffectSlot0_gameOverCurtainInitData:
         .byte   $1F,$7F,$0F,$C0
@@ -5056,11 +5048,6 @@ soundEffectSlot3_unknown2InitData:
         .byte   $03,$7F,$3D,$18
 soundEffectSlot1_chirpChirpSq1Vol_table:
         .byte   $14,$93,$94,$D3
-
-; End of "PRG_chunk1" segment
-.code
-
-.segment        "PRG_chunk1a": absolute
 
 ; Referenced via updateSoundEffectSlotShared
 soundEffectSlot0Init_table:
