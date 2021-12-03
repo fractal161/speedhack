@@ -54,28 +54,7 @@ player1_curtainRow:	.res 1	; $0078
 player1_startHeight:	.res 1	; $0079
 player1_garbageHole:	.res 1	; $007A
 .res 5
-player2_tetriminoX:	.res 1	; $0080
-player2_tetriminoY:	.res 1	; $0081
-player2_currentPiece:	.res 1	; $0082
-.res 1
-player2_levelNumber:	.res 1	; $0084
-player2_fallTimer:	.res 1	; $0085
-player2_autorepeatX:	.res 1	; $0086
-player2_startLevel:	.res 1	; $0087
-player2_playState:	.res 1	; $0088
-player2_vramRow:	.res 1	; $0089
-player2_completedRow:	.res 4	; $008A
-player2_autorepeatY:	.res 1	; $008E
-player2_holdDownPoints:	.res 1	; $008F
-player2_lines:	.res 2	; $0090
-player2_rowY:	.res 1	; $0092
-player2_score:	.res 3	; $0093
-player2_completedLines:	.res 1	; $0096
-.res 1
-player2_curtainRow:	.res 1	; $0098
-player2_startHeight:	.res 1	; $0099
-player2_garbageHole:	.res 1	; $009A
-.res 5
+.res $20
 spriteXOffset:	.res 1	; $00A0
 spriteYOffset:	.res 1	; $00A1
 spriteIndexInOamContentLookup:	.res 1	; $00A2
@@ -102,7 +81,7 @@ playfieldAddr:	.res 2	; $00B8
 totalGarbageInactivePlayer:	.res 1	; $00BB
 totalGarbage:	.res 1	; $00BC
 renderMode:	.res 1	; $00BD
-numberOfPlayers:	.res 1	; $00BE
+.res 1	; $00BE
 nextPiece:	.res 1	; $00BF
 gameMode:	.res 1	; $00C0
 gameType:	.res 1	; $00C1
@@ -156,7 +135,7 @@ statsByType:	.res $0E	; $03F0
 .res 2
 playfield:	.res $C8	; $0400
 .res 56
-playfieldForSecondPlayer:	.res $C8	; $0500
+.res $C8	; $0500
 .res 184
 musicStagingSq1Lo:	.res 1	; $0680
 musicStagingSq1Hi:	.res 1	; $0681
