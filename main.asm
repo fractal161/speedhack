@@ -1234,10 +1234,6 @@ L8824:  ldx     #$17
         dec     generalCounter
         bne     L87E7
 L884A:  ldx     #$C8
-L884C:  lda     playfield,x
-        sta     playfieldForSecondPlayer,x
-        dex
-        bne     L884C
         ldx     player1_startHeight
         lda     typeBBlankInitCountByHeightTable,x
         tay
@@ -1246,14 +1242,6 @@ L885D:  sta     playfield,y
         dey
         cpy     #$FF
         bne     L885D
-        ldx     player2_startHeight
-        lda     typeBBlankInitCountByHeightTable,x
-        tay
-        lda     #$EF
-L886D:  sta     playfieldForSecondPlayer,y
-        dey
-        cpy     #$FF
-        bne     L886D
 L8875:  rts
 
 typeBBlankInitCountByHeightTable:
@@ -2532,24 +2520,6 @@ colorTable:
         .dbyt   $0F30,$2B15,$0F30,$222B
         .dbyt   $0F30,$0016,$0F30,$0513
         .dbyt   $0F30,$1612,$0F30,$2716
-; This increment and clamping is performed in copyPlayfieldRowToVRAM instead of here
-noop_disabledVramRowIncr:
-        rts
-
-        inc     player1_vramRow
-        lda     player1_vramRow
-        cmp     #$14
-        bmi     @player2
-        lda     #$20
-        sta     player1_vramRow
-@player2:
-        inc     player2_vramRow
-        lda     player2_vramRow
-        cmp     #$14
-        bmi     @ret
-        lda     #$20
-        sta     player2_vramRow
-@ret:   rts
 
 playState_spawnNextTetrimino:
         lda     vramRow
@@ -3292,7 +3262,6 @@ gameModeState_checkForResetKeyCombo:
 gameModeState_vblankThenRunState2:
         lda     #$02
         sta     gameModeState
-        jsr     noop_disabledVramRowIncr
         rts
 
 playState_unassignOrientationId:
@@ -4921,11 +4890,6 @@ pollController_actualRead:
         rol     newlyPressedButtons_player1
         lsr     a
         rol     tmp1
-        lda     JOY2_APUFC
-        lsr     a
-        rol     newlyPressedButtons_player2
-        lsr     a
-        rol     tmp2
         dex
         bne     @readNextBit
         rts
@@ -4934,9 +4898,6 @@ addExpansionPortInputAsControllerInput:
         lda     tmp1
         ora     newlyPressedButtons_player1
         sta     newlyPressedButtons_player1
-        lda     tmp2
-        ora     newlyPressedButtons_player2
-        sta     newlyPressedButtons_player2
         rts
 
         jsr     pollController_actualRead
@@ -4946,16 +4907,11 @@ pollController:
         jsr     addExpansionPortInputAsControllerInput
         lda     newlyPressedButtons_player1
         sta     generalCounter2
-        lda     newlyPressedButtons_player2
-        sta     generalCounter3
         jsr     pollController_actualRead
         jsr     addExpansionPortInputAsControllerInput
         lda     newlyPressedButtons_player1
         and     generalCounter2
         sta     newlyPressedButtons_player1
-        lda     newlyPressedButtons_player2
-        and     generalCounter3
-        sta     newlyPressedButtons_player2
 diffOldAndNewButtons:
         ldx     #$01
 @diffForPlayer:
