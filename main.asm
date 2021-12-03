@@ -432,8 +432,8 @@ gameModeState_updatePlayer1:
         inc     gameModeState
         rts
 
-gameModeState_updatePlayer2:
-@ret:   inc     gameModeState
+gameModeState_noop:
+        inc     gameModeState
         rts
 
 gameMode_playAndEndingHighScore:
@@ -444,7 +444,7 @@ gameMode_playAndEndingHighScore:
         .addr   gameModeState_updateCountersAndNonPlayerState
         .addr   gameModeState_handleGameOver
         .addr   gameModeState_updatePlayer1
-        .addr   gameModeState_updatePlayer2
+        .addr   gameModeState_noop
         .addr   gameModeState_checkForResetKeyCombo
         .addr   gameModeState_startButtonHandling
         .addr   gameModeState_vblankThenRunState2
@@ -464,27 +464,6 @@ branchOnPlayStatePlayer1:
         .addr   playState_updateGameOverCurtain
         .addr   playState_incrementPlayState
 playState_playerControlsActiveTetrimino:
-        jsr     shift_tetrimino
-        jsr     rotate_tetrimino
-        jsr     drop_tetrimino
-        rts
-
-branchOnPlayStatePlayer2:
-        lda     playState
-        jsr     switch_s_plus_2a
-        .addr   playState_unassignOrientationId
-        .addr   playState_player2ControlsActiveTetrimino
-        .addr   playState_lockTetrimino
-        .addr   playState_checkForCompletedRows
-        .addr   playState_noop
-        .addr   playState_updateLinesAndStatistics
-        .addr   playState_bTypeGoalCheck
-        .addr   playState_receiveGarbage
-        .addr   playState_spawnNextTetrimino
-        .addr   playState_noop
-        .addr   playState_updateGameOverCurtain
-        .addr   playState_incrementPlayState
-playState_player2ControlsActiveTetrimino:
         jsr     shift_tetrimino
         jsr     rotate_tetrimino
         jsr     drop_tetrimino
@@ -815,30 +794,30 @@ gameMode_levelMenu_processPlayer1Navigation:
 @checkBPressed:
         lda     newlyPressedButtons_player1
         cmp     #$40
-        bne     @chooseRandomHole_player1
+        bne     @chooseRandomHole_1
         lda     #$02
         sta     soundEffectSlot1Init
         dec     gameMode
         rts
 
-@chooseRandomHole_player1:
+@chooseRandomHole_1:
         ldx     #$17
         ldy     #$02
         jsr     generateNextPseudorandomNumber
         lda     rng_seed
         and     #$0F
         cmp     #$0A
-        bpl     @chooseRandomHole_player1
+        bpl     @chooseRandomHole_1
         sta     player1_garbageHole
-@chooseRandomHole_player2:
+@chooseRandomHole_2:
         ldx     #$17
         ldy     #$02
         jsr     generateNextPseudorandomNumber
         lda     rng_seed
         and     #$0F
         cmp     #$0A
-        bpl     @chooseRandomHole_player2
-        sta     player2_garbageHole
+        bpl     @chooseRandomHole_2
+        sta     player1_garbageHole
         jsr     updateAudioWaitForNmiAndResetOamStaging
         jmp     gameMode_levelMenu_processPlayer1Navigation
 
@@ -1187,25 +1166,6 @@ makePlayer1Active:
         bne     @copyByteFromMirror
         rts
 
-; Copies $80 to $40
-makePlayer2Active:
-        lda     #$02
-        sta     activePlayer
-        lda     #$05
-        sta     playfieldAddr+1
-        lda     newlyPressedButtons_player2
-        sta     newlyPressedButtons
-        lda     heldButtons_player2
-        sta     heldButtons
-        ldx     #$1F
-@whileXNotNeg1:
-        lda     player2_tetriminoX,x
-        sta     tetriminoX,x
-        dex
-        cpx     #$FF
-        bne     @whileXNotNeg1
-        rts
-
 ; Copies $40 to $60
 savePlayer1State:
         ldx     #$1F
@@ -1216,21 +1176,6 @@ savePlayer1State:
         cpx     #$FF
         bne     @copyByteToMirror
 @ret:   rts
-
-; Copies $40 to $80
-savePlayer2State:
-        ldx     #$1F
-@whileXNotNeg1:
-        lda     tetriminoX,x
-        sta     player2_tetriminoX,x
-        dex
-        cpx     #$FF
-        bne     @whileXNotNeg1
-        ldx     pendingGarbage
-        lda     pendingGarbageInactivePlayer
-        sta     pendingGarbage
-        stx     pendingGarbageInactivePlayer
-        rts
 
 initPlayfieldIfTypeB:
         lda     gameType
@@ -3160,17 +3105,14 @@ gameModeState_handleGameOver:
 @resetGameState:
         lda     #$01
         sta     player1_playState
-        sta     player2_playState
         lda     #$EF
         ldx     #$04
         ldy     #$05
         jsr     memset_page
         lda     #$00
         sta     player1_vramRow
-        sta     player2_vramRow
         lda     #$01
         sta     player1_playState
-        sta     player2_playState
         jsr     updateAudioWaitForNmiAndResetOamStaging
         lda     #$03
         sta     gameMode
