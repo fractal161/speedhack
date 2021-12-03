@@ -31,30 +31,7 @@ lineIndex:	.res 1	; $0057
 curtainRow:	.res 1	; $0058
 startHeight:	.res 1	; $0059
 garbageHole:	.res 1	; $005A
-.res 5
-player1_tetriminoX:	.res 1	; $0060
-player1_tetriminoY:	.res 1	; $0061
-player1_currentPiece:	.res 1	; $0062
-.res 1
-player1_levelNumber:	.res 1	; $0064
-player1_fallTimer:	.res 1	; $0065
-player1_autorepeatX:	.res 1	; $0066
-player1_startLevel:	.res 1	; $0067
-player1_playState:	.res 1	; $0068
-player1_vramRow:	.res 1	; $0069
-player1_completedRow:	.res 4	; $006A
-player1_autorepeatY:	.res 1	; $006E
-player1_holdDownPoints:	.res 1	; $006F
-player1_lines:	.res 2	; $0070
-player1_rowY:	.res 1	; $0072
-player1_score:	.res 3	; $0073
-player1_completedLines:	.res 1	; $0076
-.res 1
-player1_curtainRow:	.res 1	; $0078
-player1_startHeight:	.res 1	; $0079
-player1_garbageHole:	.res 1	; $007A
-.res 5
-.res $20
+.res $45
 spriteXOffset:	.res 1	; $00A0
 spriteYOffset:	.res 1	; $00A1
 spriteIndexInOamContentLookup:	.res 1	; $00A2
