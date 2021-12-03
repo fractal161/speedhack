@@ -387,9 +387,6 @@ initRamContinued:
         lda     #$00
         sta     gameModeState
         sta     gameMode
-        lda     #$01
-        sta     numberOfPlayers
-        lda     #$00
         sta     frameCounter+1
 @mainLoop:
         jsr     branchOnGameMode
@@ -3193,13 +3190,7 @@ gameModeState_handleGameOver:
         lda     player1_playState
         cmp     #$00
         beq     @gameOver
-        lda     numberOfPlayers
-        cmp     #$01
-        beq     @ret
-        lda     #$04
-        sta     generalCounter2
-        lda     player2_playState
-        cmp     #$00
+        lda     #$01
         bne     @ret
 @gameOver:
         lda     #$03
