@@ -4761,20 +4761,20 @@ copyOamStagingToOam:
         sta     OAMDMA
         rts
 
+; Taken from nesdev
 pollController_actualRead:
-        ldx     #$01
-        stx     JOY1
-        dex
-        stx     JOY1
-        ldx     #$08
-@readNextBit:
+        lda     #$01
+        sta     JOY1
+        sta     newlyPressedButtons
+        lsr     a        ; now A is 0
+        ; By storing 0 into JOYPAD1, the strobe bit is cleared and the reloading stops.
+        ; This allows all 8 buttons (newly reloaded) to be read from JOYPAD1.
+        sta     JOY1
+@loop:
         lda     JOY1
-        lsr     a
-        rol     newlyPressedButtons
-        lsr     a
-        rol     tmp1
-        dex
-        bne     @readNextBit
+        lsr     a	       ; bit 0 -> Carry
+        rol     newlyPressedButtons  ; Carry -> bit 0; bit 7 -> Carry
+        bcc     @loop
         rts
 
 pollController:
