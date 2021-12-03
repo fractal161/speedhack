@@ -73,8 +73,8 @@ dropSpeed:	.res 1	; $00AF
 frameCounter:	.res 2	; $00B1
 oamStagingLength:	.res 1	; $00B3
 .res 1
-newlyPressedButtons_mirror:	.res 1	; $00B5
-pressedButtons_mirror:	.res 1	; $00B6
+newlyPressedButtons:	.res 1	; $00B5
+heldButtons:	.res 1	; $00B6
 activePlayer:	.res 1	; $00B7
 playfieldAddr:	.res 2	; $00B8
 .res 1
@@ -89,7 +89,7 @@ musicType:	.res 1	; $00C2
 sleepCounter:	.res 1	; $00C3
 ending:	.res 1	; $00C4
 .res 9
-heldButtons:	.res 1	; $00CE
+demo_heldButtons:	.res 1	; $00CE
 repeats:	.res 1	; $00CF
 .res 1
 demoButtonsTable_index:	.res 1	; $00D1
@@ -116,11 +116,7 @@ musicChannelOffset:	.res 1	; $00EE
 currentAudioSlot:	.res 1	; $00EF
 .res 1
 unreferenced_buttonMirror:  .res 3  ; $00F1
-.res 1
-newlyPressedButtons:	.res 1	; $00F5
-pressedButtons:	.res 1	; $00F6
-getHeldButtons:	.res 1	; $00F7
-.res 3
+.res 7
 joy1Location:	.res 1	; $00FB
 .res 2
 currentPpuMask:	.res 1	; $00FE

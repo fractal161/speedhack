@@ -107,10 +107,6 @@ currentSoundEffectSlot:= $00ED                  ; Temporary
 musicChannelOffset:= $00EE                      ; Temporary. Added to $4000-3 for MMIO
 currentAudioSlot:= $00EF                        ; Temporary
 unreferenced_buttonMirror := $00F1              ; Mirror of $F5-F8
-newlyPressedButtons_player1:= $00F5             ; $80-a $40-b $20-select $10-start $08-up $04-down $02-left $01-right
-newlyPressedButtons_player2:= $00F6
-heldButtons_player1:= $00F7
-heldButtons_player2:= $00F8
 joy1Location    := $00FB                        ; normal=0; 1 or 3 for expansion
 ppuScrollY      := $00FC                        ; Set to 0 many places, but not read
 ppuScrollX      := $00FD                        ; Set to 0 many places, but not read
@@ -475,7 +471,7 @@ gameMode_legalScreen:
         lda     #$FF
         sta     generalCounter
 @waitForStartButton:
-        lda     newlyPressedButtons_player1
+        lda     newlyPressedButtons
         cmp     #$10
         beq     @continueToNextScreen
         jsr     updateAudioWaitForNmiAndResetOamStaging
@@ -513,7 +509,7 @@ gameMode_titleScreen:
         sta     frameCounter+1
 @waitForStartButton:
         jsr     updateAudioWaitForNmiAndResetOamStaging
-        lda     newlyPressedButtons_player1
+        lda     newlyPressedButtons
         cmp     #$10
         beq     @startButtonPressed
         lda     frameCounter+1
@@ -582,7 +578,7 @@ L830B:  lda     #$FF
         ldx     #$02
         ldy     #$02
         jsr     memset_page
-        lda     newlyPressedButtons_player1
+        lda     newlyPressedButtons
         cmp     #$01
         bne     @rightNotPressed
         lda     #$01
@@ -592,7 +588,7 @@ L830B:  lda     #$FF
         jmp     @leftNotPressed
 
 @rightNotPressed:
-        lda     newlyPressedButtons_player1
+        lda     newlyPressedButtons
         cmp     #$02
         bne     @leftNotPressed
         lda     #$00
@@ -600,7 +596,7 @@ L830B:  lda     #$FF
         lda     #$01
         sta     soundEffectSlot1Init
 @leftNotPressed:
-        lda     newlyPressedButtons_player1
+        lda     newlyPressedButtons
         cmp     #$04
         bne     @downNotPressed
         lda     #$01
@@ -613,7 +609,7 @@ L830B:  lda     #$FF
         lda     musicSelectionTable,x
         jsr     setMusicTrack
 @downNotPressed:
-        lda     newlyPressedButtons_player1
+        lda     newlyPressedButtons
         cmp     #$08
         bne     @upNotPressed
         lda     #$01
@@ -625,7 +621,7 @@ L830B:  lda     #$FF
         lda     musicSelectionTable,x
         jsr     setMusicTrack
 @upNotPressed:
-        lda     newlyPressedButtons_player1
+        lda     newlyPressedButtons
         cmp     #$10
         bne     @startNotPressed
         lda     #$02
@@ -634,7 +630,7 @@ L830B:  lda     #$FF
         rts
 
 @startNotPressed:
-        lda     newlyPressedButtons_player1
+        lda     newlyPressedButtons
         cmp     #$40
         bne     @bNotPressed
         lda     #$02
@@ -743,8 +739,6 @@ gameMode_levelMenu_processPlayerNavigation:
         sta     startHeight
         lda     originalY
         sta     selectingLevelOrHeight
-        lda     newlyPressedButtons_player1
-        sta     newlyPressedButtons
         jsr     gameMode_levelMenu_handleLevelHeightNavigation
         lda     startLevel
         sta     player1_startLevel
@@ -752,10 +746,10 @@ gameMode_levelMenu_processPlayerNavigation:
         sta     player1_startHeight
         lda     selectingLevelOrHeight
         sta     originalY
-        lda     newlyPressedButtons_player1
+        lda     newlyPressedButtons
         cmp     #$10
         bne     @checkBPressed
-        lda     heldButtons_player1
+        lda     heldButtons
         cmp     #$90
         bne     @startAndANotPressed
         lda     player1_startLevel
@@ -771,7 +765,7 @@ gameMode_levelMenu_processPlayerNavigation:
         rts
 
 @checkBPressed:
-        lda     newlyPressedButtons_player1
+        lda     newlyPressedButtons
         cmp     #$40
         bne     @chooseRandomHole_1
         lda     #$02
@@ -1132,10 +1126,6 @@ makePlayerActive:
         sta     activePlayer
         lda     #$04
         sta     playfieldAddr+1
-        lda     newlyPressedButtons_player1
-        sta     newlyPressedButtons
-        lda     heldButtons_player1
-        sta     heldButtons
         ldx     #$1F
 @copyByteFromMirror:
         lda     player1_tetriminoX,x
@@ -1240,7 +1230,7 @@ gameModeState_updateCountersAndNonPlayerState:
         beq     @checkSelectButtonPressed
         inc     twoPlayerPieceDelayCounter
 @checkSelectButtonPressed:
-        lda     newlyPressedButtons_player1
+        lda     newlyPressedButtons
         and     #$20
         beq     @ret
         lda     displayNextPiece
@@ -2730,13 +2720,13 @@ playState_updateGameOverCurtain:
         jmp     @exitGame
 
 @checkForStartButton:
-        lda     newlyPressedButtons_player1
+        lda     newlyPressedButtons
         cmp     #$10
         bne     @ret2
 @exitGame:
         lda     #$00
         sta     playState
-        sta     newlyPressedButtons_player1
+        sta     newlyPressedButtons
 @ret2:  rts
 
 playState_checkForCompletedRows:
@@ -3113,7 +3103,7 @@ pollControllerButtons:
 
 @demoGameMode:
         jsr     pollController
-        lda     newlyPressedButtons_player1
+        lda     newlyPressedButtons
         cmp     #$10
         beq     @startButtonPressed
         lda     demo_repeats
@@ -3129,7 +3119,7 @@ pollControllerButtons:
         lda     demo_heldButtons
         eor     generalCounter
         and     generalCounter
-        sta     newlyPressedButtons_player1
+        sta     newlyPressedButtons
         lda     generalCounter
         sta     demo_heldButtons
         ldx     #$00
@@ -3143,10 +3133,10 @@ pollControllerButtons:
 
 @moveInProgress:
         lda     #$00
-        sta     newlyPressedButtons_player1
+        sta     newlyPressedButtons
 @holdButtons:
         lda     demo_heldButtons
-        sta     heldButtons_player1
+        sta     heldButtons
 @ret:   rts
 
 @startButtonPressed:
@@ -3196,7 +3186,7 @@ setMusicTrack:
 
 ; A+B+Select+Start
 gameModeState_checkForResetKeyCombo:
-        lda     heldButtons_player1
+        lda     heldButtons
         cmp     #$F0
         beq     @reset
         inc     gameModeState
@@ -3354,7 +3344,7 @@ L9F28:  lda     generalCounter5
         jsr     render_endingUnskippable
 L9F45:  jsr     render_ending
         jsr     updateAudioWaitForNmiAndResetOamStaging
-        lda     newlyPressedButtons_player1
+        lda     newlyPressedButtons
         cmp     #$10
         bne     L9F45
         lda     player1_levelNumber
@@ -3753,7 +3743,7 @@ highScoreEntryScreen:
         sta     spriteIndexInOamContentLookup
 @flickerStateSelected_checkForStartPressed:
         jsr     loadSpriteIntoOamStaging
-        lda     newlyPressedButtons_player1
+        lda     newlyPressedButtons
         and     #$10
         beq     @checkForAOrRightPressed
         lda     #$02
@@ -3761,7 +3751,7 @@ highScoreEntryScreen:
         jmp     @ret
 
 @checkForAOrRightPressed:
-        lda     newlyPressedButtons_player1
+        lda     newlyPressedButtons
         and     #$81
         beq     @checkForBOrLeftPressed
         lda     #$01
@@ -3773,7 +3763,7 @@ highScoreEntryScreen:
         lda     #$00
         sta     highScoreEntryNameOffsetForLetter
 @checkForBOrLeftPressed:
-        lda     newlyPressedButtons_player1
+        lda     newlyPressedButtons
         and     #$42
         beq     @checkForDownPressed
         lda     #$01
@@ -3784,7 +3774,7 @@ highScoreEntryScreen:
         lda     #$05
         sta     highScoreEntryNameOffsetForLetter
 @checkForDownPressed:
-        lda     heldButtons_player1
+        lda     heldButtons
         and     #$04
         beq     @checkForUpPressed
         lda     frameCounter
@@ -3809,7 +3799,7 @@ highScoreEntryScreen:
         lda     generalCounter
         sta     highScoreNames,x
 @checkForUpPressed:
-        lda     heldButtons_player1
+        lda     heldButtons
         and     #$08
         beq     @waitForVBlank
         lda     frameCounter
@@ -3889,7 +3879,7 @@ gameModeState_startButtonHandling:
         lda     gameMode
         cmp     #$05
         bne     @checkIfInGame
-        lda     newlyPressedButtons_player1
+        lda     newlyPressedButtons
         cmp     #$10
         bne     @checkIfInGame
         lda     #$01
@@ -3900,7 +3890,7 @@ gameModeState_startButtonHandling:
         lda     renderMode
         cmp     #$03
         bne     @ret
-        lda     newlyPressedButtons_player1
+        lda     newlyPressedButtons
         and     #$10
         bne     @startPressed
         jmp     @ret
@@ -3931,7 +3921,7 @@ gameModeState_startButtonHandling:
         lda     #$05
         sta     spriteIndexInOamContentLookup
         jsr     loadSpriteIntoOamStaging
-        lda     newlyPressedButtons_player1
+        lda     newlyPressedButtons
         cmp     #$10
         beq     @resume
         jsr     updateAudioWaitForNmiAndResetOamStaging
@@ -4529,7 +4519,7 @@ LA95D:  jsr     render_ending
         jsr     updateAudioWaitForNmiAndResetOamStaging
         lda     ending_customVars
         bne     LA95D
-        lda     newlyPressedButtons_player1
+        lda     newlyPressedButtons
         cmp     #$10
         bne     LA95D
         rts
@@ -4836,7 +4826,7 @@ pollController_actualRead:
 @readNextBit:
         lda     JOY1
         lsr     a
-        rol     newlyPressedButtons_player1
+        rol     newlyPressedButtons
         lsr     a
         rol     tmp1
         dex
@@ -4845,8 +4835,8 @@ pollController_actualRead:
 
 addExpansionPortInputAsControllerInput:
         lda     tmp1
-        ora     newlyPressedButtons_player1
-        sta     newlyPressedButtons_player1
+        ora     newlyPressedButtons
+        sta     newlyPressedButtons
         rts
 
         jsr     pollController_actualRead
@@ -4854,24 +4844,20 @@ addExpansionPortInputAsControllerInput:
 pollController:
         jsr     pollController_actualRead
         jsr     addExpansionPortInputAsControllerInput
-        lda     newlyPressedButtons_player1
+        lda     newlyPressedButtons
         sta     generalCounter2
         jsr     pollController_actualRead
         jsr     addExpansionPortInputAsControllerInput
-        lda     newlyPressedButtons_player1
+        lda     newlyPressedButtons
         and     generalCounter2
-        sta     newlyPressedButtons_player1
+        sta     newlyPressedButtons
 diffOldAndNewButtons:
-        ldx     #$01
-@diffForPlayer:
-        lda     newlyPressedButtons_player1,x
+        lda     newlyPressedButtons
         tay
-        eor     heldButtons_player1,x
-        and     newlyPressedButtons_player1,x
-        sta     newlyPressedButtons_player1,x
-        sty     heldButtons_player1,x
-        dex
-        bpl     @diffForPlayer
+        eor     heldButtons
+        and     newlyPressedButtons
+        sta     newlyPressedButtons
+        sty     heldButtons
         rts
 
 
