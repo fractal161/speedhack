@@ -1090,11 +1090,8 @@ gameModeState_initGameBackground_finish:
         jsr     updateAudioWaitForNmiAndResetOamStaging
         lda     #$01
         sta     player1_playState
-        sta     player2_playState
         lda     player1_startLevel
         sta     player1_levelNumber
-        lda     player2_startLevel
-        sta     player2_levelNumber
         inc     gameModeState
         rts
 
@@ -1119,26 +1116,17 @@ gameModeState_initGameState:
         bne     @initStatsByType
         lda     #$05
         sta     player1_tetriminoX
-        sta     player2_tetriminoX
         lda     #$00
         sta     player1_tetriminoY
-        sta     player2_tetriminoY
         sta     player1_vramRow
-        sta     player2_vramRow
         sta     player1_fallTimer
-        sta     player2_fallTimer
         sta     pendingGarbage
         sta     pendingGarbageInactivePlayer
         sta     player1_score
         sta     player1_score+1
         sta     player1_score+2
-        sta     player2_score
-        sta     player2_score+1
-        sta     player2_score+2
         sta     player1_lines
         sta     player1_lines+1
-        sta     player2_lines
-        sta     player2_lines+1
         sta     twoPlayerPieceDelayCounter
         sta     lineClearStatsByType
         sta     lineClearStatsByType+1
@@ -1156,10 +1144,8 @@ gameModeState_initGameState:
         sta     renderMode
         lda     #$A0
         sta     player1_autorepeatY
-        sta     player2_autorepeatY
         jsr     chooseNextTetrimino
         sta     player1_currentPiece
-        sta     player2_currentPiece
         jsr     incrementPieceStat
         ldx     #$17
         ldy     #$02
@@ -1171,7 +1157,6 @@ gameModeState_initGameState:
         beq     @skipTypeBInit
         lda     #$25
         sta     player1_lines
-        sta     player2_lines
 @skipTypeBInit:
         lda     #$47
         sta     outOfDateRenderFlags
@@ -1263,7 +1248,6 @@ L87E7:  lda     generalCounter
         sta     generalCounter2
         lda     #$00
         sta     player1_vramRow
-        sta     player2_vramRow
         lda     #$09
         sta     generalCounter3
 L87FC:  ldx     #$17
@@ -1340,7 +1324,6 @@ gameModeState_updateCountersAndNonPlayerState:
         lda     #$00
         sta     oamStagingLength
         inc     player1_fallTimer
-        inc     player2_fallTimer
         lda     twoPlayerPieceDelayCounter
         beq     @checkSelectButtonPressed
         inc     twoPlayerPieceDelayCounter
@@ -2349,28 +2332,6 @@ render_mode_play_and_demo:
         lda     player1_lines+1
         sta     PPUDATA
         lda     player1_lines
-        jsr     twoDigsToPPU
-        lda     outOfDateRenderFlags
-        and     #$FE
-        sta     outOfDateRenderFlags
-        jmp     @renderLevel
-
-@renderLinesTwoPlayers:
-        lda     #$20
-        sta     PPUADDR
-        lda     #$68
-        sta     PPUADDR
-        lda     player1_lines+1
-        sta     PPUDATA
-        lda     player1_lines
-        jsr     twoDigsToPPU
-        lda     #$20
-        sta     PPUADDR
-        lda     #$7A
-        sta     PPUADDR
-        lda     player2_lines+1
-        sta     PPUDATA
-        lda     player2_lines
         jsr     twoDigsToPPU
         lda     outOfDateRenderFlags
         and     #$FE
