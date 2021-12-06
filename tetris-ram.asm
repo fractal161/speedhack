@@ -37,7 +37,7 @@ spriteYOffset:	.res 1	; $00A1
 spriteIndexInOamContentLookup:	.res 1	; $00A2
 .res 3
 nextPiece_2player:	.res 1	; $00A6
-verticalBlankingWaitRequested_andSomethingElse:	.res 1	; $00A7
+gameModeState:	.res 1	; $00A7
 generalCounter:	.res 1	; $00A8
 generalCounter2:	.res 1	; $00A9
 generalCounter3:	.res 1	; $00AA

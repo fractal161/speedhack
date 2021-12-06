@@ -705,17 +705,9 @@ gameMode_levelMenu:
 gameMode_levelMenu_processPlayerNavigation:
         lda     #$00
         sta     activePlayer
-        lda     startLevel
-        sta     startLevel
-        lda     startHeight
-        sta     startHeight
         lda     originalY
         sta     selectingLevelOrHeight
         jsr     gameMode_levelMenu_handleLevelHeightNavigation
-        lda     startLevel
-        sta     startLevel
-        lda     startHeight
-        sta     startHeight
         lda     selectingLevelOrHeight
         sta     originalY
         lda     newlyPressedButtons
@@ -2135,38 +2127,18 @@ render_mode_play_and_demo:
         bne     @playStateNotDisplayLineClearingAnimation
         lda     #$04
         sta     playfieldAddr+1
-        lda     rowY
-        sta     rowY
-        lda     completedRow
-        sta     completedRow
-        lda     completedRow+1
-        sta     completedRow+1
-        lda     completedRow+2
-        sta     completedRow+2
-        lda     completedRow+3
-        sta     completedRow+3
-        lda     playState
-        sta     playState
         jsr     updateLineClearingAnimation
-        lda     rowY
-        sta     rowY
-        lda     playState
-        sta     playState
         lda     #$00
         sta     vramRow
         jmp     @renderLines
 
 @playStateNotDisplayLineClearingAnimation:
-        lda     vramRow
-        sta     vramRow
         lda     #$04
         sta     playfieldAddr+1
         jsr     copyPlayfieldRowToVRAM
         jsr     copyPlayfieldRowToVRAM
         jsr     copyPlayfieldRowToVRAM
         jsr     copyPlayfieldRowToVRAM
-        lda     vramRow
-        sta     vramRow
 
 @renderLines:
         lda     outOfDateRenderFlags
@@ -3290,8 +3262,6 @@ L9F45:  jsr     render_ending
         lda     newlyPressedButtons
         cmp     #$10
         bne     L9F45
-        lda     levelNumber
-        sta     levelNumber
         lda     $DC
         sta     score
         lda     $DD
@@ -4735,19 +4705,19 @@ copyAddrAtReturnAddressToTmp_incrReturnAddrBy2:
 
 ;reg x: zeropage addr of seed; reg y: size of seed
 generateNextPseudorandomNumber:
-        ldx     #$17
+        ; ldx     #$17
         ldy     #$02
-        lda     tmp1,x
+        lda     rng_seed ; lda     tmp1,x
         and     #$02
         sta     tmp1
-        lda     tmp2,x
+        lda     rng_seed+1 ; lda     tmp2,x
         and     #$02
         eor     tmp1
         clc
         beq     @updateNextByteInSeed
         sec
 @updateNextByteInSeed:
-        ror     tmp1,x
+        ror     rng_seed ; ror     tmp1,x
         inx
         dey
         bne     @updateNextByteInSeed
