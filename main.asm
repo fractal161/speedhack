@@ -406,6 +406,22 @@ gameModeState_updatePlayer:
 
 gameMode_playAndEndingHighScore:
         lda     gameModeState
+        ldx     gameMode
+        cpx     #$05
+        beq     @demo
+        cmp     #$00
+        bne     @no_init
+        jsr     gameModeState_initGameBackground
+        jsr     gameModeState_initGameState
+@no_init:
+        jsr     gameModeState_updateCountersAndNonPlayerState
+        jsr     gameModeState_handleGameOver
+        jsr     gameModeState_updatePlayer
+        jsr     gameModeState_checkForResetKeyCombo
+        jsr     gameModeState_startButtonHandling
+        jsr     gameModeState_vblankThenRunState2
+        rts
+@demo:
         jsr     switch_s_plus_2a
         .addr   gameModeState_initGameBackground
         .addr   gameModeState_initGameState
