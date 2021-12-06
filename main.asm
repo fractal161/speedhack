@@ -366,14 +366,32 @@ gameMode_playAndEndingHighScore_jmp:
 
 branchOnGameMode:
         lda     gameMode
-        jsr     switch_s_plus_2a
-        .addr   gameMode_legalScreen
-        .addr   gameMode_titleScreen
-        .addr   gameMode_gameTypeMenu
-        .addr   gameMode_levelMenu
-        .addr   gameMode_playAndEndingHighScore_jmp
-        .addr   gameMode_playAndEndingHighScore_jmp
-        .addr   gameMode_startDemo
+        cmp     #$04
+        bne     @not4
+        jmp     gameMode_playAndEndingHighScore
+@not4:
+        cmp     #$00
+        bne     @not0
+        jmp     gameMode_legalScreen
+@not0:
+        cmp     #$01
+        bne     @not1
+        jmp     gameMode_titleScreen
+@not1:
+        cmp     #$02
+        bne     @not2
+        jmp     gameMode_gameTypeMenu
+@not2:
+        cmp     #$03
+        bne     @not3
+        jmp     gameMode_levelMenu
+@not3:
+        cmp     #$05
+        bne     @not5
+        jmp     gameMode_playAndEndingHighScore
+@not5:
+        jmp     gameMode_startDemo
+
 gameModeState_updatePlayer:
         jsr     makePlayerActive
         jsr     branchOnPlayStatePlayer
