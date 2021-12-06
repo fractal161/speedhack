@@ -218,8 +218,6 @@ nmi:    pha
         lda     #$00
         adc     frameCounter+1
         sta     frameCounter+1
-        ldx     #$17
-        ldy     #$02
         jsr     generateNextPseudorandomNumber
         lda     #$00
         sta     ppuScrollX
@@ -4705,22 +4703,18 @@ copyAddrAtReturnAddressToTmp_incrReturnAddrBy2:
 
 ;reg x: zeropage addr of seed; reg y: size of seed
 generateNextPseudorandomNumber:
-        ; ldx     #$17
-        ldy     #$02
-        lda     rng_seed ; lda     tmp1,x
+        lda     rng_seed
         and     #$02
         sta     tmp1
-        lda     rng_seed+1 ; lda     tmp2,x
+        lda     rng_seed+1
         and     #$02
         eor     tmp1
         clc
         beq     @updateNextByteInSeed
         sec
 @updateNextByteInSeed:
-        ror     rng_seed ; ror     tmp1,x
-        inx
-        dey
-        bne     @updateNextByteInSeed
+        ror rng_seed
+        ror rng_seed+1
         rts
 
 ; canon is initializeOAM
