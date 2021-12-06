@@ -235,6 +235,10 @@ nmi:    pha
 irq:    rti
 
 render: lda     renderMode
+        cmp     #$03
+        bne     @switch
+        jmp     render_mode_play_and_demo
+@switch:
         jsr     switch_s_plus_2a
         .addr   render_mode_legal_and_title_screens
         .addr   render_mode_menu_screens
@@ -413,6 +417,10 @@ gameMode_playAndEndingHighScore:
         .addr   gameModeState_vblankThenRunState2
 branchOnPlayStatePlayer:
         lda     playState
+        cmp     #$01
+        bne     @switch
+        jmp     playState_playerControlsActiveTetrimino
+@switch:
         jsr     switch_s_plus_2a
         .addr   playState_unassignOrientationId
         .addr   playState_playerControlsActiveTetrimino
@@ -3137,9 +3145,6 @@ gameModeState_vblankThenRunState2:
 playState_unassignOrientationId:
         lda     #$13
         sta     currentPiece
-        rts
-
-        inc     gameModeState
         rts
 
 playState_incrementPlayState:
