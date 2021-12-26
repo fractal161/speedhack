@@ -35,7 +35,8 @@ garbageHole:	.res 1	; $005A
 spriteXOffset:	.res 1	; $00A0
 spriteYOffset:	.res 1	; $00A1
 spriteIndexInOamContentLookup:	.res 1	; $00A2
-.res 3
+outOfDateRenderFlags:	.res 1	; $00A3
+.res 2
 nextPiece_2player:	.res 1	; $00A6
 gameModeState:	.res 1	; $00A7
 generalCounter:	.res 1	; $00A8
