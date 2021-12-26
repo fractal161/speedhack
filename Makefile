@@ -1,7 +1,15 @@
+WINDOWS := $(shell which wine ; echo $$?)
+UNAME_S := $(shell uname -s)
+
 tetris_obj := main.o tetris-ram.o tetris.o
 cc65Path := tools/cc65
 
-MD5 := md5sum -c
+# Hack for OSX
+ifeq ($(UNAME_S),Darwin)
+	SHA1SUM := shasum
+else
+	SHA1SUM := sha1sum
+endif
 
 CA65 := ca65
 LD65 := ld65
@@ -22,7 +30,8 @@ CAFLAGS = -g
 LDFLAGS =
 
 compare: $(tetris)
-		@$(MD5) tetris.md5
+	$(SHA1SUM) -c tetris.sha1
+
 clean:
 	rm -f  $(tetris_obj) $(tetris) *.d tetris.dbg tetris.lbl gfx/*.chr
 	$(MAKE) clean -C tools/cTools/
