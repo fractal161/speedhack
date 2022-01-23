@@ -1224,9 +1224,10 @@ rotate_tetrimino:
         asl     a
         tax
         lda     newlyPressedButtons
-        and     #$80
-        cmp     #$80
-        bne     @aNotPressed
+        ; and     #$80
+        ; cmp     #$80
+        ; bne     @aNotPressed
+        bpl     @aNotPressed
         inx
         lda     rotationTable,x
         sta     currentPiece
@@ -1234,7 +1235,7 @@ rotate_tetrimino:
         bne     @restoreOrientationID
         lda     #$05
         sta     soundEffectSlot1Init
-        jmp     @ret
+        rts
 
 @aNotPressed:
         lda     newlyPressedButtons
@@ -1247,7 +1248,7 @@ rotate_tetrimino:
         bne     @restoreOrientationID
         lda     #$05
         sta     soundEffectSlot1Init
-        jmp     @ret
+        rts
 
 @restoreOrientationID:
         lda     originalY
@@ -1495,46 +1496,6 @@ orientationTable:
         .byte   $00,$7B,$FE,$00,$7B,$FF,$00,$7B
         .byte   $00,$00,$7B,$01,$00,$FF,$00,$00
         .byte   $FF,$00,$00,$FF,$00,$00,$FF,$00
-        lda     spriteIndexInOamContentLookup
-        asl     a
-        asl     a
-        sta     generalCounter
-        asl     a
-        clc
-        adc     generalCounter
-        tay
-        ldx     oamStagingLength
-        lda     #$04
-        sta     generalCounter2
-L8B9D:  lda     orientationTable,y
-        clc
-        asl     a
-        asl     a
-        asl     a
-        adc     spriteYOffset
-        sta     oamStaging,x
-        inx
-        iny
-        lda     orientationTable,y
-        sta     oamStaging,x
-        inx
-        iny
-        lda     #$02
-        sta     oamStaging,x
-        inx
-        lda     orientationTable,y
-        clc
-        asl     a
-        asl     a
-        asl     a
-        adc     spriteXOffset
-        sta     oamStaging,x
-        inx
-        iny
-        dec     generalCounter2
-        bne     L8B9D
-        stx     oamStagingLength
-        rts
 
 stageSpriteForNextPiece:
         lda     displayNextPiece
@@ -4571,7 +4532,7 @@ rocketToXOffsetTable:
 LAA2A:  .byte   $BF,$BF,$BF,$BF,$C7
 ; canon is waitForVerticalBlankingInterval
 updateAudioWaitForNmiAndResetOamStaging:
-        jsr     updateAudio_jmp
+        jsr     updateAudio
         lda     #$00
         sta     verticalBlankingInterval
         nop
@@ -4585,7 +4546,7 @@ updateAudioWaitForNmiAndResetOamStaging:
         rts
 
 updateAudioAndWaitForNmi:
-        jsr     updateAudio_jmp
+        jsr     updateAudio
         lda     #$00
         sta     verticalBlankingInterval
         nop
@@ -5117,8 +5078,6 @@ noisevol_table:
 
 
 ; canon is updateAudio
-updateAudio_jmp:
-        jmp     updateAudio
 
 ; canon is updateAudio
 updateAudio2:
