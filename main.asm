@@ -416,6 +416,10 @@ gameMode_playAndEndingHighScore:
 @no_init:
         jsr     gameModeState_updateCountersAndNonPlayerState
         jsr     gameModeState_handleGameOver
+        cmp     #$03
+        bne     @notOverYet
+        rts
+@notOverYet:
         jsr     gameModeState_updatePlayer
         jsr     gameModeState_checkForResetKeyCombo
         jsr     gameModeState_startButtonHandling
