@@ -4539,10 +4539,19 @@ updateAudioWaitForNmiAndResetOamStaging:
 @checkForNmi:
         lda     verticalBlankingInterval
         beq     @checkForNmi
+        lda     playState
+        cmp     #$01
+        bne     @cont1
+        lda     gameMode
+        cmp     #$04
+        bne     @cont1
+        rts
+@cont1:
         lda     #$FF
         ldx     #$02
         ldy     #$02
         jsr     memset_page
+@ret:
         rts
 
 updateAudioAndWaitForNmi:
