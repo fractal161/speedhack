@@ -4543,6 +4543,23 @@ updateAudioWaitForNmiAndResetOamStaging:
         lda     gameMode
         cmp     #$04
         bne     @cont1
+        lda     #$FF
+        sta     $0210
+        sta     $0211
+        sta     $0212
+        sta     $0213
+        sta     $0214
+        sta     $0215
+        sta     $0216
+        sta     $0217
+        sta     $0218
+        sta     $0219
+        sta     $021A
+        sta     $021B
+        sta     $021C
+        sta     $021D
+        sta     $021E
+        sta     $021F
         rts
 @cont1:
         lda     #$FF
