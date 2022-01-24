@@ -7,7 +7,7 @@
 
 .segment "HEADER"
 
-INES_MAPPER = 1 ; 0 = NROM
+INES_MAPPER = 4 ; 0 = NROM
 INES_MIRROR = 0 ; 0 = horizontal mirroring, 1 = vertical mirroring
 INES_SRAM   = 0 ; 1 = battery backed SRAM at $6000-7FFF
 

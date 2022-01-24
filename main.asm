@@ -569,8 +569,8 @@ render_mode_legal_and_title_screens:
 
 gameMode_gameTypeMenu:
         inc     initRam
-        lda     #$10
-        jsr     setMMC1Control
+        ; lda     #$10
+        ; jsr     setMMC1Control
         lda     #$01
         sta     renderMode
         jsr     updateAudioWaitForNmiAndDisablePpuRendering
@@ -705,8 +705,8 @@ L830B:  lda     #$FF
 
 gameMode_levelMenu:
         inc     initRam
-        lda     #$10
-        jsr     setMMC1Control
+        ; lda     #$10
+        ; jsr     setMMC1Control
         jsr     updateAudio2
         lda     #$01
         sta     renderMode
@@ -3591,8 +3591,8 @@ highScoreIndexToHighScoreScoresOffset:
         .byte   $00,$03,$06,$09,$0C,$0F,$12,$15
 highScoreEntryScreen:
         inc     initRam
-        lda     #$10
-        jsr     setMMC1Control
+        ; lda     #$10
+        ; jsr     setMMC1Control
         lda     #$09
         jsr     setMusicTrack
         lda     #$02
@@ -4870,39 +4870,87 @@ setMMC1Control:
         rts
 
 changeCHRBank0:
-        sta     MMC1_CHR0
-        lsr     a
-        sta     MMC1_CHR0
-        lsr     a
-        sta     MMC1_CHR0
-        lsr     a
-        sta     MMC1_CHR0
-        lsr     a
-        sta     MMC1_CHR0
+        asl     a
+        asl     a
+        ldx     #$00
+        stx     $8000
+        sta     $8001
+        inx
+        clc
+        adc     #$02
+        stx     $8000
+        sta     $8001
+        ; sta     MMC1_CHR0
+        ; lsr     a
+        ; sta     MMC1_CHR0
+        ; lsr     a
+        ; sta     MMC1_CHR0
+        ; lsr     a
+        ; sta     MMC1_CHR0
+        ; lsr     a
+        ; sta     MMC1_CHR0
         rts
 
 changeCHRBank1:
-        sta     MMC1_CHR1
-        lsr     a
-        sta     MMC1_CHR1
-        lsr     a
-        sta     MMC1_CHR1
-        lsr     a
-        sta     MMC1_CHR1
-        lsr     a
-        sta     MMC1_CHR1
+        asl     a
+        asl     a
+        ldx     #$02
+        stx     $8000
+        sta     $8001
+        inx
+        clc
+        adc     #$01
+        stx     $8000
+        sta     $8001
+        inx
+        clc
+        adc     #$01
+        stx     $8000
+        sta     $8001
+        inx
+        clc
+        adc     #$01
+        stx     $8000
+        sta     $8001
+
+        ; sta     MMC1_CHR1
+        ; lsr     a
+        ; sta     MMC1_CHR1
+        ; lsr     a
+        ; sta     MMC1_CHR1
+        ; lsr     a
+        ; sta     MMC1_CHR1
+        ; lsr     a
+        ; sta     MMC1_CHR1
         rts
 
 changePRGBank:
-        sta     MMC1_PRG
-        lsr     a
-        sta     MMC1_PRG
-        lsr     a
-        sta     MMC1_PRG
-        lsr     a
-        sta     MMC1_PRG
-        lsr     a
-        sta     MMC1_PRG
+        asl     a
+        asl     a
+        ldx     #$06
+        stx     $8000
+        sta     $8001
+        inx
+        clc
+        adc     #$01
+        stx     $8000
+        sta     $8001
+        ; ldx     #$46
+        ; clc
+        ; adc     #$01
+        ; stx     $8000
+        ; sta     $8001
+        ; ldx     #$06
+        ; stx     $8000
+        ; sta     MMC1_PRG
+        ; lsr     a
+        ; sta     MMC1_PRG
+        ; lsr     a
+        ; sta     MMC1_PRG
+        ; lsr     a
+        ; sta     MMC1_PRG
+        ; lsr     a
+        ; sta     MMC1_PRG
         rts
 
 game_palette:
