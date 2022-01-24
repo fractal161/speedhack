@@ -2061,25 +2061,19 @@ sprite55Penguin2:
         .byte   $F8,$CE,$21,$08,$F8,$CF,$21,$10
         .byte   $00,$DD,$21,$00,$00,$DE,$21,$08
         .byte   $FF
+multBy12Table:
+        .byte   $00,$0C,$18,$24,$30,$3C,$48,$54
+        .byte   $60,$6C,$78,$84,$90,$9C,$A8,$B4
+        .byte   $C0,$CC,$D8
 isPositionValid:
-        lda     tetriminoY
-        asl     a
-        sta     generalCounter
-        asl     a
-        asl     a
+        ldx     tetriminoY
+        lda     multBy10Table,x
         clc
-        adc     generalCounter
         adc     tetriminoX
         sta     generalCounter
-        lda     currentPiece
-        asl     a
-        asl     a
-        sta     generalCounter2
-        asl     a
-        clc
-        adc     generalCounter2
+        ldx     currentPiece
+        lda     multBy12Table,x
         tax
-        ldy     #$00
         lda     #$04
         sta     generalCounter3
 ; Checks one square within the tetrimino
