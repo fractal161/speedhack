@@ -2239,6 +2239,9 @@ render_mode_play_and_demo:
         ldy     #$00
         sty     ppuScrollY
         sty     PPUSCROLL
+        lda     #$80
+        sta     PPUCTRL
+        sta     currentPpuCtrl
         rts
 
 pieceToPpuStatAddr:
