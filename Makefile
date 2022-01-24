@@ -15,9 +15,9 @@ CA65 := ca65
 LD65 := ld65
 nesChrEncode := python3 tools/nes-util/nes_chr_encode.py
 
-tetris.nes: tetris.o main.o tetris-ram.o
+infinity.nes: tetris.o main.o tetris-ram.o
 
-tetris:= tetris.nes
+tetris:= infinity.nes
 
 .SUFFIXES:
 .SECONDEXPANSION:
@@ -33,7 +33,7 @@ compare: $(tetris)
 	$(SHA1SUM) -c tetris.sha1
 
 clean:
-	rm -f  $(tetris_obj) $(tetris) *.d tetris.dbg tetris.lbl gfx/*.chr
+	rm -f  $(tetris_obj) $(tetris) *.d infinity.dbg infinity.lbl gfx/*.chr
 	$(MAKE) clean -C tools/cTools/
 
 tools:

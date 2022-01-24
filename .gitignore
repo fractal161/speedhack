@@ -2,6 +2,6 @@
 *.o
 *.chr
 *.pyc
-tetris.lst
-tetris.lbl
-tetris.dbg
+infinity.lst
+infinity.lbl
+infinity.dbg
