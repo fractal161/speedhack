@@ -483,6 +483,7 @@ branchOnPlayStatePlayer:
         .addr   playState_updateGameOverCurtain
         .addr   playState_incrementPlayState
 playState_playerControlsActiveTetrimino:
+        inc     fallTimer
         jsr     shift_tetrimino
         jsr     rotate_tetrimino
         jsr     drop_tetrimino
@@ -1247,7 +1248,6 @@ gameModeState_updateCountersAndNonPlayerState:
         jsr     changeCHRBank1
         lda     #$00
         sta     oamStagingLength
-        inc     fallTimer
         lda     twoPlayerPieceDelayCounter
         beq     @checkSelectButtonPressed
         inc     twoPlayerPieceDelayCounter
