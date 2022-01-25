@@ -204,7 +204,7 @@ nmi:    pha
         pha
         lda     #$01
         sta     $E000
-        lda     #$78
+        lda     #$6E
         sta     $C000
         sta     $C001
         lda     #$01
