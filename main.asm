@@ -3,6 +3,7 @@
 tmp1            := $0000
 tmp2            := $0001
 tmp3            := $0002
+pollCount       := $0003
 tmpBulkCopyToPpuReturnAddr:= $0005
 patchToPpuAddr  := $0014
 rng_seed        := $0017
@@ -235,6 +236,8 @@ nmi:    pha
         lda     #$01
         sta     verticalBlankingInterval
         jsr     pollControllerButtons
+        lda     #$00
+        sta     pollCount
         pla
         tay
         pla
@@ -251,6 +254,7 @@ irq:
         pha
 ; What we actually care about
         jsr     pollController
+        inc     pollCount
         pla
         tay
         pla
@@ -482,6 +486,18 @@ playState_playerControlsActiveTetrimino:
         jsr     shift_tetrimino
         jsr     rotate_tetrimino
         jsr     drop_tetrimino
+        ; MAKE SURE TO CHECK IF PIECE IS LOCKED
+        lda     playState
+        cmp     #$02
+        beq     @ret
+        lda     pollCount
+        cmp     #$01 ; NUMBER OF POLLS - 1
+        beq     @ret
+@waitForNextPoll:
+        cmp     pollCount
+        beq     @waitForNextPoll
+        jmp     playState_playerControlsActiveTetrimino
+@ret:
         rts
 
 gameMode_legalScreen:
@@ -2263,7 +2279,7 @@ render_mode_play_and_demo:
         ldy     #$00
         sty     ppuScrollY
         sty     PPUSCROLL
-        lda     #$80
+        lda     #$90
         sta     PPUCTRL
         sta     currentPpuCtrl
         rts
