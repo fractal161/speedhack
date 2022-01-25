@@ -810,6 +810,7 @@ gameMode_levelMenu_processPlayerNavigation:
         lda     #$02
         sta     soundEffectSlot1Init
         inc     gameMode
+        cli
         rts
 
 @checkBPressed:
@@ -2577,6 +2578,7 @@ playState_lockTetrimino:
         lda     #$F0
         sta     curtainRow
         jsr     updateAudio2
+        sei
         rts
 
 @notGameOver:
@@ -5348,7 +5350,6 @@ LE215:  rts
 updateAudio:
         lda     #$C0
         sta     JOY2_APUFC
-        cli
         lda     musicStagingNoiseHi
         cmp     #$05
         beq     LE1EF
