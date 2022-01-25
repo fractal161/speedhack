@@ -201,6 +201,14 @@ nmi:    pha
         pha
         tya
         pha
+        lda     #$01
+        sta     $E000
+        lda     #$78
+        sta     $C000
+        sta     $C001
+        lda     #$01
+        sta     $E000
+        sta     $E001
         lda     #$00
         sta     oamStagingLength
         jsr     render
@@ -232,7 +240,23 @@ nmi:    pha
         pla
         tax
         pla
-irq:    rti
+        rti
+irq:
+; Acknowledge interrupt, start again if necessary
+        sta     $E000
+        pha
+        txa
+        pha
+        tya
+        pha
+; What we actually care about
+        jsr     pollController
+        pla
+        tay
+        pla
+        tax
+        pla
+        rti
 
 render: lda     renderMode
         cmp     #$03
@@ -5308,6 +5332,7 @@ LE215:  rts
 updateAudio:
         lda     #$C0
         sta     JOY2_APUFC
+        cli
         lda     musicStagingNoiseHi
         cmp     #$05
         beq     LE1EF
