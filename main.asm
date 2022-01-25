@@ -4,6 +4,7 @@ tmp1            := $0000
 tmp2            := $0001
 tmp3            := $0002
 pollCount       := $0003
+pollsThisFrame  := $0004
 tmpBulkCopyToPpuReturnAddr:= $0005
 patchToPpuAddr  := $0014
 rng_seed        := $0017
@@ -236,8 +237,7 @@ nmi:    pha
         lda     #$01
         sta     verticalBlankingInterval
         jsr     pollControllerButtons
-        lda     #$00
-        sta     pollCount
+        sta     pollsThisFrame ; Since we've polled once during nmi
         pla
         tay
         pla
@@ -254,13 +254,26 @@ irq:
         pha
 ; What we actually care about
         jsr     pollController
-        inc     pollCount
+        inc     pollsThisFrame
         pla
         tay
         pla
         tax
         pla
         rti
+scanlineIndexTable:
+        .byte   $00,$01,$03,$06,$0A,$0F,$15,$1C
+        .byte
+; Starts with 120hz. First entry is -20 of what's expected because nmi
+scanlineLengthTable:
+        .byte  $6E
+        .byte  $43,$AE
+        .byte  $2D,$82,$C3
+        .byte  $20,$68,$9C,$D0
+        .byte  $17,$57,$82,$AE,$D9
+        .byte  $11,$4A,$6F,$95,$BA,$DF
+        .byte  $0C,$41,$61,$82,$A3,$C3,$E4
+        .byte  $09,$3A,$57,$74,$91,$AE,$CB,$E8
 
 render: lda     renderMode
         cmp     #$03
@@ -487,15 +500,15 @@ playState_playerControlsActiveTetrimino:
         jsr     shift_tetrimino
         jsr     rotate_tetrimino
         jsr     drop_tetrimino
-        ; MAKE SURE TO CHECK IF PIECE IS LOCKED
         lda     playState
         cmp     #$02
         beq     @ret
-        lda     pollCount
-        cmp     #$01 ; NUMBER OF POLLS - 1
+        lda     pollsThisFrame
+        cmp     #$02 ; NUMBER OF POLLS
         beq     @ret
+;
 @waitForNextPoll:
-        cmp     pollCount
+        cmp     pollsThisFrame
         beq     @waitForNextPoll
         jmp     playState_playerControlsActiveTetrimino
 @ret:
