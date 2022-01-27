@@ -3,7 +3,7 @@
 tmp1            := $0000
 tmp2            := $0001
 tmp3            := $0002
-pollCount       := $0003
+pollsPerFrame   := $0003
 pollsThisFrame  := $0004
 tmpBulkCopyToPpuReturnAddr:= $0005
 patchToPpuAddr  := $0014
@@ -192,6 +192,8 @@ JOY2_APUFC      := $4017                        ; read: bits 0-4 joy data lines 
 MMC1_CHR0       := $BFFF
 MMC1_CHR1       := $DFFF
 
+maxPollRate      = 5
+
 .segment        "PRG_chunk1": absolute
 
 ; incremented to reset MMC1 reg
@@ -203,12 +205,15 @@ nmi:    pha
         pha
         tya
         pha
-        lda     #$01
+        ; DEBUG
+        lda     #maxPollRate
+        sta     pollsPerFrame
         sta     $E000
-        lda     #$6E
+        ldy     pollsPerFrame
+        ldx     scanlineIndexTable,y
+        lda     scanlineLengthTable,x
         sta     $C000
         sta     $C001
-        lda     #$01
         sta     $E000
         sta     $E001
         lda     #$00
@@ -236,8 +241,8 @@ nmi:    pha
         sta     PPUSCROLL
         lda     #$01
         sta     verticalBlankingInterval
-        jsr     pollControllerButtons
         sta     pollsThisFrame ; Since we've polled once during nmi
+        jsr     pollControllerButtons
         pla
         tay
         pla
@@ -245,16 +250,33 @@ nmi:    pha
         pla
         rti
 irq:
-; Acknowledge interrupt, start again if necessary
+; Acknowledge interrupt
         sta     $E000
         pha
         txa
         pha
         tya
         pha
+; Make next scanline request
+        ldx     pollsPerFrame
+        lda     scanlineIndexTable,x
+        clc
+        adc     pollsThisFrame
+        tax
+        lda     scanlineLengthTable,x
+        sta     $C000
+        sta     $C001
+        sta     $E000
+        sta     $E001
 ; What we actually care about
         jsr     pollController
         inc     pollsThisFrame
+; Disable irq if this is the last one
+        lda     pollsThisFrame
+        cmp     pollsPerFrame
+        bne     @finish
+        sta     $E000
+@finish:
         pla
         tay
         pla
@@ -262,18 +284,30 @@ irq:
         pla
         rti
 scanlineIndexTable:
-        .byte   $00,$01,$03,$06,$0A,$0F,$15,$1C
-        .byte
+        .byte   $00,$00,$00,$01,$03,$06,$0A,$0F
+        .byte   $15,$1C,$24,$2D,$37,$42,$4E,$5B
+        .byte   $69,$78,$88,$99,$AB
 ; Starts with 120hz. First entry is -20 of what's expected because nmi
 scanlineLengthTable:
-        .byte  $6E
-        .byte  $43,$AE
-        .byte  $2D,$82,$C3
-        .byte  $20,$68,$9C,$D0
-        .byte  $17,$57,$82,$AE,$D9
-        .byte  $11,$4A,$6F,$95,$BA,$DF
-        .byte  $0C,$41,$61,$82,$A3,$C3,$E4
-        .byte  $09,$3A,$57,$74,$91,$AE,$CB,$E8
+        .byte  $77
+        .byte  $4B, $56
+        .byte  $35, $41, $40
+        .byte  $28, $33, $34, $33
+        .byte  $1F, $2B, $2B, $2A, $2B
+        .byte  $19, $25, $24, $24, $25, $24
+        .byte  $14, $20, $20, $20, $1F, $20, $20
+        .byte  $11, $1C, $1C, $1C, $1C, $1C, $1C, $1D
+        .byte  $0E, $19, $19, $19, $1A, $19, $19, $19, $19
+        .byte  $0B, $17, $17, $17, $17, $17, $16, $17, $17, $17
+        .byte  $09, $15, $15, $15, $15, $15, $14, $15, $15, $15, $15
+        .byte  $08, $13, $13, $13, $13, $14, $13, $13, $13, $13, $13, $13
+        .byte  $06, $12, $12, $12, $11, $12, $12, $11, $12, $12, $12, $11, $12
+        .byte  $05, $11, $10, $11, $10, $10, $11, $10, $11, $10, $11, $10, $11, $10
+        .byte  $04, $0F, $10, $0F, $10, $0F, $0F, $10, $0F, $0F, $10, $0F, $10, $0F, $0F
+        .byte  $03, $0E, $0F, $0E, $0F, $0E, $0F, $0E, $0E, $0F, $0E, $0F, $0E, $0E, $0F, $0E
+        .byte  $02, $0E, $0D, $0E, $0D, $0E, $0E, $0D, $0E, $0D, $0E, $0D, $0E, $0D, $0E, $0E, $0D
+        .byte  $01, $0D, $0D, $0D, $0D, $0C, $0D, $0D, $0D, $0D, $0C, $0D, $0D, $0D, $0C, $0D, $0D, $0D
+        .byte  $01, $0C, $0C, $0C, $0C, $0C, $0C, $0C, $0D, $0C, $0C, $0C, $0C, $0C, $0C, $0C, $0C, $0C, $0D
 
 render: lda     renderMode
         cmp     #$03
@@ -504,7 +538,7 @@ playState_playerControlsActiveTetrimino:
         cmp     #$02
         beq     @ret
         lda     pollsThisFrame
-        cmp     #$02 ; NUMBER OF POLLS
+        cmp     pollsPerFrame
         beq     @ret
 ;
 @waitForNextPoll:
