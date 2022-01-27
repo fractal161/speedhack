@@ -193,7 +193,7 @@ JOY2_APUFC      := $4017                        ; read: bits 0-4 joy data lines 
 MMC1_CHR0       := $BFFF
 MMC1_CHR1       := $DFFF
 
-maxPollRate      = 10
+maxPollRate      = 9
 
 .segment        "PRG_chunk1": absolute
 
@@ -206,7 +206,11 @@ nmi:    pha
         pha
         tya
         pha
-        ; DEBUG
+; Check if active piece control
+        lda     playState
+        cmp     #$01
+        bne     @skipIrq
+; DEBUG
         lda     #maxPollRate
         sta     pollsPerFrame
         sta     $E000
@@ -217,6 +221,7 @@ nmi:    pha
         sta     $C001
         sta     $E000
         sta     $E001
+@skipIrq:
         lda     #$00
         sta     oamStagingLength
         jsr     render
@@ -537,7 +542,7 @@ playState_playerControlsActiveTetrimino:
         jsr     drop_tetrimino
         lda     playState
         cmp     #$02
-        beq     @ret
+        beq     @retAndClear
         lda     pollsThisFrame
         cmp     pollsPerFrame
         beq     @ret
@@ -546,6 +551,8 @@ playState_playerControlsActiveTetrimino:
         cmp     pollsThisFrame
         beq     @waitForNextPoll
         jmp     playState_playerControlsActiveTetrimino
+@retAndClear:
+        sei
 @ret:
         rts
 
@@ -859,7 +866,6 @@ gameMode_levelMenu_processPlayerNavigation:
         lda     #$02
         sta     soundEffectSlot1Init
         inc     gameMode
-        cli
         rts
 
 @checkBPressed:
@@ -1136,6 +1142,7 @@ gameModeState_initGameBackground_finish:
         jsr     updateAudioWaitForNmiAndResetOamStaging
         lda     #$01
         sta     playState
+        cli
         lda     startLevel
         sta     levelNumber
         inc     gameModeState
@@ -2508,6 +2515,7 @@ playState_spawnNextTetrimino:
         sta     tetriminoY
         lda     #$01
         sta     playState
+        cli
         lda     #$05
         sta     tetriminoX
         ldx     nextPiece
@@ -2626,7 +2634,6 @@ playState_lockTetrimino:
         lda     #$F0
         sta     curtainRow
         jsr     updateAudio2
-        sei
         rts
 
 @notGameOver:
@@ -3049,15 +3056,13 @@ gameModeState_handleGameOver:
         sta     renderMode
         jsr     handleHighScoreIfNecessary
 @resetGameState:
-        lda     #$01
-        sta     playState
         lda     #$EF
         ldx     #$04
         ldy     #$04
         jsr     memset_page
         lda     #$00
         sta     vramRow
-        lda     #$01
+        lda     #$00
         sta     playState
         jsr     updateAudioWaitForNmiAndResetOamStaging
         lda     #$03
