@@ -6,6 +6,7 @@ tmp3            := $0002
 pollsPerFrame   := $0003
 pollsThisFrame  := $0004
 tmpBulkCopyToPpuReturnAddr:= $0005
+pollTmp         := $0007
 patchToPpuAddr  := $0014
 rng_seed        := $0017
 spawnID         := $0019
@@ -192,7 +193,7 @@ JOY2_APUFC      := $4017                        ; read: bits 0-4 joy data lines 
 MMC1_CHR0       := $BFFF
 MMC1_CHR1       := $DFFF
 
-maxPollRate      = 5
+maxPollRate      = 10
 
 .segment        "PRG_chunk1": absolute
 
@@ -4860,10 +4861,10 @@ pollController_actualRead:
 pollController:
         jsr     pollController_actualRead
         lda     newlyPressedButtons
-        sta     generalCounter2
+        sta     pollTmp
         jsr     pollController_actualRead
         lda     newlyPressedButtons
-        and     generalCounter2
+        and     pollTmp
         sta     newlyPressedButtons
 diffOldAndNewButtons:
         tay

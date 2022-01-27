@@ -4,7 +4,9 @@ tmp2:	.res 1	; $0001
 tmp3:	.res 1	; $0002
 pollsPerFrame: .res 1 ; $0003
 pollsThisFrame: .res 1 ; $0004
-.res 18
+tmpBulkCopyToPpuReturnAddr: .res 2
+pollTmp: .res 1
+.res 15
 rng_seed:	.res 2	; $0017
 spawnID:	.res 1	; $0019
 spawnCount:	.res 1	; $001A
