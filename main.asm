@@ -213,6 +213,8 @@ nmi:    pha
 ; DEBUG
         lda     #maxPollRate
         sta     pollsPerFrame
+        cmp     #$01
+        beq     @skipIrq
         sta     $E000
         ldy     pollsPerFrame
         ldx     scanlineIndexTable,y
