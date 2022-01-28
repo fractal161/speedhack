@@ -643,8 +643,8 @@ gameMode_titleScreen:
 @timeout:
         lda     #$02
         sta     soundEffectSlot1Init
-        lda     #$06
-        sta     gameMode
+        ; lda     #$06
+        ; sta     gameMode
         rts
 
 render_mode_legal_and_title_screens:
