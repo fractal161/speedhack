@@ -276,6 +276,7 @@ irq:
         sta     $C001
         sta     $E000
         sta     $E001
+        jsr     generateNextPseudorandomNumber
 ; What we actually care about
         jsr     pollController
         inc     pollsThisFrame
