@@ -193,7 +193,7 @@ JOY2_APUFC      := $4017                        ; read: bits 0-4 joy data lines 
 MMC1_CHR0       := $BFFF
 MMC1_CHR1       := $DFFF
 
-maxPollRate      = 8
+maxPollRate      = 6
 
 .segment        "PRG_chunk1": absolute
 
@@ -533,7 +533,7 @@ branchOnPlayStatePlayer:
         .addr   playState_noop
         .addr   playState_updateLinesAndStatistics
         .addr   playState_bTypeGoalCheck
-        .addr   playState_receiveGarbage
+        .addr   playState_receiveGarbage ; THE ONE TO GET RID OF
         .addr   playState_spawnNextTetrimino
         .addr   playState_noop
         .addr   playState_updateGameOverCurtain
