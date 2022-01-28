@@ -1530,12 +1530,10 @@ stageSpriteForCurrentPiece:
         adc     generalCounter4
         sta     oamStaging,y ; stage y coordinate of mino
         sta     originalY
-        inc     oamStagingLength
         iny
         inx
         lda     orientationTable,x
         sta     oamStaging,y ; stage block type of mino
-        inc     oamStagingLength
         iny
         inx
         lda     #$02
@@ -1543,7 +1541,6 @@ stageSpriteForCurrentPiece:
         lda     originalY
         cmp     #$2F ; compares with smallest allowed y position on the screen, not the field
         bcs     @validYCoordinate
-        inc     oamStagingLength
         dey
         lda     #$FF
         sta     oamStaging,y ; change priority to back
@@ -1554,7 +1551,6 @@ stageSpriteForCurrentPiece:
         jmp     @finishLoop
 
 @validYCoordinate:
-        inc     oamStagingLength
         iny
         lda     orientationTable,x
         asl     a
@@ -1564,7 +1560,10 @@ stageSpriteForCurrentPiece:
         adc     generalCounter3
         sta     oamStaging,y ; stage actual x coordinate
 @finishLoop:
-        inc     oamStagingLength
+        lda     #$04
+        clc
+        adc     oamStagingLength
+        sta     oamStagingLength
         iny
         inx
         dec     generalCounter2
