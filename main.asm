@@ -102,11 +102,13 @@ playfield       := $0400
 musicStagingSq1Lo:= $0680
 musicStagingSq1Hi:= $0681
 audioInitialized:= $0682
+musicPauseSoundEffectLengthCounter:= $0683
 musicStagingSq2Lo:= $0684
 musicStagingSq2Hi:= $0685
 musicStagingTriLo:= $0688
 musicStagingTriHi:= $0689
 resetSq12ForMusic:= $068A                       ; 0-off. 1-sq1. 2-sq1 and sq2
+musicPauseSoundEffectCounter:= $068B
 musicStagingNoiseLo:= $068C
 musicStagingNoiseHi:= $068D
 musicDataNoteTableOffset:= $0690                ; AKA start of musicData, of size $0A
@@ -5080,28 +5082,28 @@ defaultHighScoresTable:
         .byte  "HOWARD" ;$08,$0F,$17,$01,$12,$04
         .byte  "OTASAN" ;$0F,$14,$01,$13,$01,$0E
         .byte  "LANCE " ;$0C,$01,$0E,$03,$05,$2B
-        .byte  $00,$00,$00,$00,$00,$00 ;unknown
+        .byte  $00,$00,$00,$00,$00,$00 ;unused fourth name
         .byte  "ALEX  " ;$01,$0C,$05,$18,$2B,$2B
         .byte  "TONY  " ;$14,$0F,$0E,$19,$2B,$2B
         .byte  "NINTEN" ;$0E,$09,$0E,$14,$05,$0E
-        .byte   $00,$00,$00,$00,$00,$00 ;unknown
+        .byte   $00,$00,$00,$00,$00,$00 ;unused fourth name
         ;High Scores are stored in BCD
         .byte   $01,$00,$00 ;Game A 1st Entry Score, 10000
         .byte   $00,$75,$00 ;Game A 2nd Entry Score, 7500
         .byte   $00,$50,$00 ;Game A 3rd Entry Score, 5000
-        .byte   $00,$00,$00 ;unknown
+        .byte   $00,$00,$00 ;unused fourth score
         .byte   $00,$20,$00 ;Game B 1st Entry Score, 2000
         .byte   $00,$10,$00 ;Game B 2nd Entry Score, 1000
         .byte   $00,$05,$00 ;Game B 3rd Entry Score, 500
-        .byte   $00,$00,$00 ;unknown
+        .byte   $00,$00,$00 ;unused fourth score
         .byte   $09 ;Game A 1st Entry Level
         .byte   $05 ;Game A 2nd Entry Level
         .byte   $00 ;Game A 3nd Entry Level
-        .byte   $00 ;unknown
+        .byte   $00 ;unused fourth level
         .byte   $09 ;Game B 1st Entry Level
         .byte   $05 ;Game B 2nd Entry Level
         .byte   $00 ;Game B 3rd Entry Level
-        .byte   $00 ;unknown
+        .byte   $00 ;unused fourth level
         .byte   $FF
 
 ;.segment        "legal_screen_nametable": absolute
@@ -5149,10 +5151,10 @@ soundEffectSlot0_gameOverCurtainInitData:
 soundEffectSlot0_endingRocketInitData:
         .byte   $08,$7F,$0E,$C0
 ; Referenced at LE20F
-unknown_sq1_data1:
+music_pause_sq1_even:
         .byte   $9D,$7F,$7A,$28
 ; Referenced at LE20F
-unknown_sq1_data2:
+music_pause_sq1_odd:
         .byte   $9D,$7F,$40,$28
 soundEffectSlot1_rotateTetriminoInitData:
         .byte   $9E,$7F,$C0,$28
@@ -5180,12 +5182,11 @@ soundEffectSlot1Playing_chirpChirpStage2:
         .byte   $82,$7F,$30,$F8
 soundEffectSlot1_shiftTetriminoInitData:
         .byte   $98,$7F,$80,$38
-soundEffectSlot3_unknown1InitData:
+soundEffectSlot3_donkInitData:
         .byte   $30,$7F,$70,$08
-soundEffectSlot3_unknown2InitData:
+soundEffectSlot3_fallingAlienInitData:
         .byte   $03,$7F,$3D,$18
 soundEffectSlot1_chirpChirpSq1Vol_table:
-        .byte   $14,$93,$94,$D3
 
 ; Referenced via updateSoundEffectSlotShared
 soundEffectSlot0Init_table:
@@ -5379,26 +5380,29 @@ LE1D8:  lda     #$0F
 initAudioAndMarkInited:
         inc     audioInitialized
         jsr     muteAudio
-        sta     $0683
+        sta     musicPauseSoundEffectLengthCounter ; a = 0
         rts
 
-LE1EF:  lda     audioInitialized
+updateAudio_pause:
+        lda     audioInitialized
         beq     initAudioAndMarkInited
-        lda     $0683
+        lda     musicPauseSoundEffectLengthCounter
         cmp     #$12
-        beq     LE215
+        beq     @ret
         and     #$03
         cmp     #$03
-        bne     LE212
-        inc     $068B
-        ldy     #<unknown_sq1_data2
-        lda     $068B
+        bne     @incAndRet
+        inc     musicPauseSoundEffectCounter
+        ldy     #<music_pause_sq1_odd
+        lda     musicPauseSoundEffectCounter
         and     #$01
-        bne     LE20F
-        ldy     #<unknown_sq1_data1
-LE20F:  jsr     copyToSq1Channel
-LE212:  inc     $0683
-LE215:  rts
+        bne     @tableChosen
+        ldy     #<music_pause_sq1_even
+@tableChosen:
+        jsr     copyToSq1Channel
+@incAndRet:
+        inc     musicPauseSoundEffectLengthCounter
+@ret:   rts
 
 ; Disables APU frame interrupt
 updateAudio:
@@ -5406,7 +5410,7 @@ updateAudio:
         sta     JOY2_APUFC
         lda     musicStagingNoiseHi
         cmp     #$05
-        beq     LE1EF
+        beq     updateAudio_pause
         lda     #$00
         sta     audioInitialized
         sta     $068B
@@ -5721,10 +5725,10 @@ LE442:  jsr     copyToSq1Channel
         lda     soundEffectSlot1TertiaryCounter
         adc     soundEffectSlot1SecondaryCounter
         tay
-        lda     unknown1_table,y
+        lda     soundEffectSlot1_lineClearing_lo,y
         sta     SQ1_LO
         ldy     soundEffectSlot1SecondaryCounter
-        lda     sq1vol_unknown2_table,y
+        lda     soundEffectSlot1_lineClearing_vol,y
         sta     SQ1_VOL
         bne     LE46F
         lda     soundEffectSlot1Playing
@@ -5771,10 +5775,10 @@ LE493:  lda     soundEffectSlot1SecondaryCounter
 LE4AC:  sta     SQ1_HI
 LE4AF:  rts
 
-sq1vol_unknown2_table:
+soundEffectSlot1_lineClearing_vol:
         .byte   $9E,$9B,$99,$96,$94,$93,$92,$91
         .byte   $00
-unknown1_table:
+soundEffectSlot1_lineClearing_lo:
         .byte   $46,$37,$46,$37,$46,$37,$46,$37
         .byte   $70,$80,$90,$A0,$B0,$C0,$D0,$E0
         .byte   $C0,$89,$B8,$68,$A0,$50,$90,$40
@@ -5783,7 +5787,7 @@ soundEffectSlot1_levelUpPlaying:
         bne     LE4AF
         ldy     soundEffectSlot1SecondaryCounter
         inc     soundEffectSlot1SecondaryCounter
-        lda     unknown18_table,y
+        lda     soundEffectSlot1_levelUp_lo,y
         beq     LE4E9
         sta     SQ1_LO
         lda     #$28
@@ -5796,7 +5800,7 @@ soundEffectSlot1_levelUpInit:
         ldy     #<soundEffectSlot1_levelUpInitData
         jmp     initSoundEffectShared
 
-unknown18_table:
+soundEffectSlot1_levelUp_lo:
         .byte   $69,$A8,$69,$A8,$8D,$53,$8D,$53
         .byte   $8D,$00,$A9,$10,$8D,$04,$40,$A9
         .byte   $00,$8D,$C9,$06,$8D,$FA,$06,$60
@@ -5824,7 +5828,7 @@ updateSoundEffectSlot3_apu:
         beq     soundEffectSlot3Playing_stop
         sta     TRI_LO
         sta     soundEffectSlot3TertiaryCounter
-        lda     soundEffectSlot3_unknown1InitData+3
+        lda     soundEffectSlot3_fallingAlienInitData+3
         sta     TRI_HI
         rts
 
