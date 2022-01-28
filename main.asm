@@ -193,7 +193,7 @@ JOY2_APUFC      := $4017                        ; read: bits 0-4 joy data lines 
 MMC1_CHR0       := $BFFF
 MMC1_CHR1       := $DFFF
 
-maxPollRate      = 6
+maxPollRate      = 7
 
 .segment        "PRG_chunk1": absolute
 
@@ -482,9 +482,9 @@ branchOnGameMode:
 
 gameModeState_updatePlayer:
         jsr     makePlayerActive
+        jsr     stageSpriteForNextPiece
         jsr     branchOnPlayStatePlayer
         jsr     stageSpriteForCurrentPiece
-        jsr     stageSpriteForNextPiece
         inc     gameModeState
         rts
 
@@ -1530,42 +1530,38 @@ stageSpriteForCurrentPiece:
         adc     generalCounter4
         sta     oamStaging,y ; stage y coordinate of mino
         sta     originalY
-        iny
-        inx
-        lda     orientationTable,x
-        sta     oamStaging,y ; stage block type of mino
-        iny
-        inx
+        lda     orientationTable+1,x
+        sta     oamStaging+1,y ; stage block type of mino
         lda     #$02
-        sta     oamStaging,y ; stage palette/front priority
+        sta     oamStaging+2,y ; stage palette/front priority
         lda     originalY
         cmp     #$2F ; compares with smallest allowed y position on the screen, not the field
         bcs     @validYCoordinate
-        dey
         lda     #$FF
-        sta     oamStaging,y ; change priority to back
-        iny
-        iny
+        sta     oamStaging+1,y ; make tile transparent
         lda     #$00
-        sta     oamStaging,y ; make x coordinate 0 for some reason
+        sta     oamStaging+3,y ; make x coordinate 0 for some reason
         jmp     @finishLoop
 
 @validYCoordinate:
-        iny
-        lda     orientationTable,x
+        lda     orientationTable+2,x
         asl     a
         asl     a
         asl     a
         clc
         adc     generalCounter3
-        sta     oamStaging,y ; stage actual x coordinate
+        sta     oamStaging+3,y ; stage actual x coordinate
 @finishLoop:
         lda     #$04
         clc
         adc     oamStagingLength
         sta     oamStagingLength
-        iny
-        inx
+        tya
+        adc     #$04
+        tay
+        txa
+        adc     #$03
+        tax
         dec     generalCounter2
         bne     @stageMino
         rts
