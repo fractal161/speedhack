@@ -89,7 +89,6 @@ soundRngSeed    := $00EB                        ; Set, but not read
 currentSoundEffectSlot:= $00ED                  ; Temporary
 musicChannelOffset:= $00EE                      ; Temporary. Added to $4000-3 for MMIO
 currentAudioSlot:= $00EF                        ; Temporary
-unreferenced_buttonMirror := $00F1              ; Mirror of $F5-F8
 joy1Location    := $00FB                        ; normal=0; 1 or 3 for expansion
 ppuScrollY      := $00FC                        ; Set to 0 many places, but not read
 ppuScrollX      := $00FD                        ; Set to 0 many places, but not read
@@ -155,7 +154,6 @@ soundEffectSlot2Playing:= $06FA
 soundEffectSlot3Playing:= $06FB
 soundEffectSlot4Playing:= $06FC
 currentlyPlayingMusicTrack:= $06FD              ; Copied from musicTrack
-unreferenced_soundRngTmp:= $06FF
 highScoreNames  := $0700
 highScoreScoresA:= $0730
 highScoreScoresB:= $073C
@@ -1442,8 +1440,7 @@ framesPerDropTable:
         .byte   $08,$06,$05,$05,$05,$04,$04,$04
         .byte   $03,$03,$03,$02,$02,$02,$02,$02
         .byte   $02,$02,$02,$02,$02,$01
-unreferenced_framesPerDropTable:
-        .byte   $01,$01
+
 shift_tetrimino:
         lda     tetriminoX
         sta     originalY
@@ -1619,16 +1616,6 @@ orientationToSpriteTable:
         .byte   $00,$00,$06,$00,$00,$00,$00,$09
         .byte   $08,$00,$0B,$07,$00,$00,$0A,$00
         .byte   $00,$00,$0C
-; Same as orientationToSpriteTable except sprites have different offsets
-unreferenced_orientationToSpriteTable:
-        .byte   $00,$00,$0F,$00,$00,$00,$00,$12
-        .byte   $11,$00,$14,$10,$00,$00,$13,$00
-        .byte   $00,$00,$15
-unreferenced_data2:
-        .byte   $00,$FF,$FE,$FD,$FC,$FD,$FE,$FF
-        .byte   $00,$01,$02,$03,$04,$05,$06,$07
-        .byte   $08,$09,$0A,$0B,$0C,$0D,$0E,$0F
-        .byte   $10,$11,$12,$13
 loadSpriteIntoOamStaging:
         clc
         lda     spriteIndexInOamContentLookup

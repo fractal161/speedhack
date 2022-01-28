@@ -96,9 +96,7 @@ soundRngSeed: .res 2  ; $00EB
 currentSoundEffectSlot:	.res 1	; $00ED
 musicChannelOffset:	.res 1	; $00EE
 currentAudioSlot:	.res 1	; $00EF
-.res 1
-unreferenced_buttonMirror:  .res 3  ; $00F1
-.res 7
+.res 11
 joy1Location:	.res 1	; $00FB
 .res 2
 currentPpuMask:	.res 1	; $00FE
@@ -178,8 +176,7 @@ soundEffectSlot2Playing:	.res 1	; $06FA
 soundEffectSlot3Playing:	.res 1	; $06FB
 soundEffectSlot4Playing:	.res 1	; $06FC
 currentlyPlayingMusicTrack:	.res 1	; $06FD
-.res 1
-unreferenced_soundRngTmp:  .res 1  ; $06FF
+.res 2
 highScoreNames:	.res $30	; $0700
 highScoreScoresA:	.res $C	; $0730
 highScoreScoresB:	.res $C	; $073C
