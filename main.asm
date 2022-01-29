@@ -3,15 +3,17 @@
 tmp1            := $0000
 tmp2            := $0001
 tmp3            := $0002
-pollsPerFrame   := $0003
-pollsThisFrame  := $0004
-tmpBulkCopyToPpuReturnAddr:= $0005
-pollTmp         := $0007
+pollTmp         := $0003
+tmpBulkCopyToPpuReturnAddr:= $0004
+pollsPerFrame   := $0006
+pollsThisFrame  := $0007
+gameCycleCount  := $0008 ;
 patchToPpuAddr  := $0014
 rng_seed        := $0017
 spawnID         := $0019
 spawnCount      := $001A
-verticalBlankingInterval:= $0033
+inputBuffer     := $0020 ; Tentatively size $14=20?
+verticalBlankingInterval:= $003F
 tetriminoX      := $0040                        ; Player data is $20 in size. It is copied here from $60 or $80, processed, then copied back
 tetriminoY      := $0041
 currentPiece    := $0042                        ; Current piece as an orientation ID
@@ -215,6 +217,11 @@ nmi:    pha
         sta     pollsPerFrame
         cmp     #$01
         beq     @skipIrq
+        lda     gameCycleCount
+        cmp     pollsPerFrame
+        beq     @dontCrash
+        .byte   $02
+@dontCrash:
         sta     $E000
         ldy     pollsPerFrame
         ldx     scanlineIndexTable,y
@@ -247,6 +254,7 @@ nmi:    pha
         sta     PPUSCROLL
         sta     ppuScrollY
         sta     PPUSCROLL
+        sta     gameCycleCount
         lda     #$01
         sta     verticalBlankingInterval
         sta     pollsThisFrame ; Since we've polled once during nmi
@@ -448,10 +456,6 @@ initRamContinued:
 @continue:
         jmp     @mainLoop
 
-gameMode_playAndEndingHighScore_jmp:
-        jsr     gameMode_playAndEndingHighScore
-        rts
-
 branchOnGameMode:
         lda     gameMode
         cmp     #$04
@@ -538,21 +542,23 @@ branchOnPlayStatePlayer:
         .addr   playState_noop
         .addr   playState_updateGameOverCurtain
         .addr   playState_incrementPlayState
+; Do this whenever gameCycleCount < pollsThisFrame
 playState_playerControlsActiveTetrimino:
         inc     fallTimer
         jsr     shift_tetrimino
         jsr     rotate_tetrimino
         jsr     drop_tetrimino
+        inc     gameCycleCount
         lda     playState
         cmp     #$02
-        beq     @retAndClear
-        lda     pollsThisFrame
+        beq     @retAndClear ; Exit if piece has locked
+        lda     gameCycleCount
         cmp     pollsPerFrame
         beq     @ret
-;
+; idle when gameCycleCount >= pollsThisFrame
 @waitForNextPoll:
         cmp     pollsThisFrame
-        beq     @waitForNextPoll
+        bcs     @waitForNextPoll
         jmp     playState_playerControlsActiveTetrimino
 @retAndClear:
         sei
@@ -1623,8 +1629,7 @@ loadSpriteIntoOamStaging:
         tax
         lda     oamContentLookup,x
         sta     generalCounter
-        inx
-        lda     oamContentLookup,x
+        lda     oamContentLookup+1,x
         sta     generalCounter2
         ldx     oamStagingLength
         ldy     #$00
@@ -3174,7 +3179,8 @@ gameMode_startDemo:
         sta     playState
         lda     #$05
         sta     gameMode
-        jmp     gameMode_playAndEndingHighScore_jmp
+        jsr     gameMode_playAndEndingHighScore
+        rts
 
 ; canon is adjustMusicSpeed
 setMusicTrack:

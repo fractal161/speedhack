@@ -2,18 +2,19 @@
 tmp1:	.res 1	; $0000
 tmp2:	.res 1	; $0001
 tmp3:	.res 1	; $0002
-pollsPerFrame: .res 1 ; $0003
-pollsThisFrame: .res 1 ; $0004
-tmpBulkCopyToPpuReturnAddr: .res 2
-pollTmp: .res 1
-.res 15
+pollTmp: .res 1 ; $0003
+tmpBulkCopyToPpuReturnAddr: .res 2 ; $0004
+pollsPerFrame: .res 1 ; $0006
+pollsThisFrame: .res 1 ; $0007
+gameCycleCount: .res 1 ; $0008
+.res 14
 rng_seed:	.res 2	; $0017
 spawnID:	.res 1	; $0019
 spawnCount:	.res 1	; $001A
-.res 24
-verticalBlankingInterval:	.res 1	; $0033
-unused_0E: .res 1 ; $0034
+.res 5
+inputBuffer: .res 20 ; $0020
 .res 11
+verticalBlankingInterval:	.res 1	; $003F
 tetriminoX:	.res 1	; $0040
 tetriminoY:	.res 1	; $0041
 currentPiece:	.res 1	; $0042
