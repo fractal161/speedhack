@@ -539,11 +539,11 @@ render_mode_legal_and_title_screens:
         sta     PPUADDR
         lda     #$CA
         sta     PPUADDR
-        lda     subFrameTop
+        lda     pollsPerFrame
         sta     PPUDATA
         lda     #$4F
         sta     PPUDATA
-        lda     pollsPerFrame
+        lda     subFrameTop
         sta     PPUDATA
 
         lda     #$00
