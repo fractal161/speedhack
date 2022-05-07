@@ -5,6 +5,12 @@
 ; 3. Write to $E000 again to latch in the countdown value
 ; 4. Write to $E001 to enable the IRQ counter
 
+; faster while loop concept
+; sec
+; @mod10: sbc #$A
+; bcs @mod10
+; adc #$A
+
 irq:
 ; Acknowledge interrupt
         sta     $E000

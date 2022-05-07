@@ -9,14 +9,17 @@ playState_playerControlsActiveTetrimino:
         cmp     #$02
         beq     @retAndClear ; Exit if piece has locked
         lda     gameCycleCount
-        cmp     pollsPerFrame
-        beq     @ret
+        cmp     pollsThisFrame
+; If gameCycleCount < pollsThisFrame then we run another cycle
+        bcc     playState_playerControlsActiveTetrimino
+        lda     framesToWait
+        bne     @ret ; if framesToWait == 0 then more polls will happen later in the frame
 ; idle when gameCycleCount >= pollsThisFrame
 @waitForNextPoll:
         cmp     pollsThisFrame
         bcs     @waitForNextPoll
         jmp     playState_playerControlsActiveTetrimino
 @retAndClear:
-        sei
+        sei ; so no interrupts are called during lock/line clear delay
 @ret:
         rts
