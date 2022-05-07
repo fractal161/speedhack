@@ -7,24 +7,10 @@ nmi:    pha
         lda     playState
         cmp     #$01
         bne     @skipIrq
-; DEBUG
-        lda     #maxPollRate
-        sta     pollsPerFrame
-        cmp     #$01
-        beq     @skipIrq
-        ; lda     gameCycleCount
-        ; cmp     pollsPerFrame
-        ; beq     @dontCrash
-        ; .byte   $02
-@dontCrash:
-        sta     $E000
-        ldy     pollsPerFrame
-        ldx     scanlineIndexTable,y
-        lda     scanlineLengthTable,x
-        sta     $C000
-        sta     $C001
-        sta     $E000
-        sta     $E001
+; Check if next scanline is now, or sometime in the future
+
+; If in the future, schedule next poll
+
 @skipIrq:
         lda     #$00
         sta     oamStagingLength
@@ -52,7 +38,6 @@ nmi:    pha
         sta     gameCycleCount
         lda     #$01
         sta     verticalBlankingInterval
-        sta     pollsThisFrame ; Since we've polled once during nmi
         jsr     pollControllerButtons
         pla
         tay

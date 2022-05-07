@@ -5,11 +5,12 @@ tmp3:	.res 1	; $0002
 tmpBulkCopyToPpuReturnAddr: .res 2 ; $0003
 pollTmp: .res 1 ; $0005
 pollsPerFrame: .res 1 ; $0006
-subFrameTop: .res 1 ;$0007
+subFrameTop: .res 1 ; $0007
 pollsThisFrame: .res 1 ; $0008
 gameCycleCount: .res 1 ; $0009
-pollIndex: .res 1 ;$000A
-.res 12
+pollIndex: .res 1 ; $000A
+pollAddr: .res 2 ; $000B
+.res 10
 rng_seed:	.res 2	; $0017
 spawnID:	.res 1	; $0019
 spawnCount:	.res 1	; $001A

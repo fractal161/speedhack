@@ -10,6 +10,7 @@ subFrameTop     := $0007
 pollsThisFrame  := $0008
 gameCycleCount  := $0009
 pollIndex       := $000A
+pollAddr        := $000B
 patchToPpuAddr  := $0014
 rng_seed        := $0017
 spawnID         := $0019
@@ -275,6 +276,10 @@ initRamContinued:
         stx     rng_seed
         dex
         stx     rng_seed+1
+        lda     #$01
+        sta     subFrameTop
+        lda     #$01
+        sta     pollsPerFrame
         ldy     #$00
         sty     ppuScrollX
         sty     PPUSCROLL
@@ -525,7 +530,20 @@ render_mode_legal_and_title_screens:
         sta     PPUSCROLL
         sta     ppuScrollY
         sta     PPUSCROLL
+        lda     gameMode
+        bne     @renderSpeed
         rts
+@renderSpeed:
+        lda     #$22
+        sta     PPUADDR
+        lda     #$CA
+        sta     PPUADDR
+        lda     subFrameTop
+        sta     PPUDATA
+        lda     #$4F
+        sta     PPUDATA
+        lda     pollsPerFrame
+        sta     PPUDATA
 
         lda     #$00
         sta     levelNumber
