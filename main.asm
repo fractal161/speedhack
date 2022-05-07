@@ -206,9 +206,9 @@ maxPollRate      = 7
 initRam:ldx     #$00
         jmp     initRamContinued
 
-.include        "src/nmi.asm"
-.include        "src/irq.asm"
-.include        "src/polldata.asm"
+.include "src/nmi.asm"
+.include "src/irq.asm"
+.include "src/polldata.asm"
 
 render: lda     renderMode
         cmp     #$03
@@ -431,7 +431,7 @@ branchOnPlayStatePlayer:
         .addr   playState_updateGameOverCurtain
         .addr   playState_incrementPlayState
 
-.include        "src/gamelogic.asm"
+.include "src/gamelogic.asm"
 
 gameMode_legalScreen:
         jsr     updateAudio2
@@ -504,6 +504,7 @@ gameMode_titleScreen:
         lda     frameCounter+1
         cmp     #$05
         beq     @timeout
+.include "src/selectspeed.asm"
         jmp     @waitForStartButton
 
 ; Show menu screens

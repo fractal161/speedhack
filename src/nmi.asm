@@ -3,15 +3,6 @@ nmi:    pha
         pha
         tya
         pha
-; Check if active piece control
-        lda     playState
-        cmp     #$01
-        bne     @skipIrq
-; Check if next scanline is now, or sometime in the future
-
-; If in the future, schedule next poll
-
-@skipIrq:
         lda     #$00
         sta     oamStagingLength
         jsr     render
@@ -35,7 +26,6 @@ nmi:    pha
         sta     PPUSCROLL
         sta     ppuScrollY
         sta     PPUSCROLL
-        sta     gameCycleCount
         lda     #$01
         sta     verticalBlankingInterval
         jsr     pollControllerButtons
