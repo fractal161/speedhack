@@ -11,6 +11,7 @@ pollsThisFrame  := $0008
 gameCycleCount  := $0009
 pollIndex       := $000A
 pollAddr        := $000B
+framesToWait    := $000D
 patchToPpuAddr  := $0014
 rng_seed        := $0017
 spawnID         := $0019
@@ -198,7 +199,7 @@ JOY2_APUFC      := $4017                        ; read: bits 0-4 joy data lines 
 MMC1_CHR0       := $BFFF
 MMC1_CHR1       := $DFFF
 
-maxPollRate      = 7
+maxPollRate      = 2
 
 .segment        "PRG_chunk1": absolute
 

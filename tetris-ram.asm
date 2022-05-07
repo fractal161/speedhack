@@ -10,7 +10,8 @@ pollsThisFrame: .res 1 ; $0008
 gameCycleCount: .res 1 ; $0009
 pollIndex: .res 1 ; $000A
 pollAddr: .res 2 ; $000B
-.res 10
+framesToWait: .res 1 ; $000D
+.res 9
 rng_seed:	.res 2	; $0017
 spawnID:	.res 1	; $0019
 spawnCount:	.res 1	; $001A
