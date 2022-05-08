@@ -23,20 +23,8 @@ irq:
         jsr     pollController
         jsr     generateNextPseudorandomNumber
         inc     pollsThisFrame
-; Try and figure out next poll
-        lda     pollIndex
-        sta     pollTmp
-        clc
-        adc     subFrameTop
-@while:
-        cmp     pollsPerFrame
-        bcc     @finish
-        sec
-        sbc     pollsPerFrame
-        inc     framesToWait
-        jmp     @while
-@finish:
-        jsr     scheduleNextPoll
+        jsr     setNextPollIndex
+        jsr     setupIrq
         pla
         tay
         pla
@@ -44,9 +32,24 @@ irq:
         pla
         rti
 
+setNextPollIndex:
+; Try and figure out next poll
+        lda     pollIndex
+        sta     pollTmp
+        clc
+        adc     subFrameTop
+@while:
+        cmp     pollsPerFrame
+        bcc     @ret
+        sec
+        sbc     pollsPerFrame
+        inc     framesToWait
+        jmp     @while
+@ret:
+        rts
 ; very likely mod 241 issues
 ; pollTmp has old index pollIndex has new index
-scheduleNextPoll:
+setupIrq:
         lda     framesToWait
         bne     @ret ; Wait for nmi
         ldy     pollIndex
@@ -54,9 +57,14 @@ scheduleNextPoll:
         ldy     pollTmp
         sec
         sbc     (pollAddr),y ; COULD BE OFF BY 1
+        jsr     makeIrqRequest
+@ret:
+        rts ; shouldn't need to write to $E000 because irq is already acknowledged?
+
+; Assumes a already has the number of scanlines to wait
+makeIrqRequest:
         sta     $C000
         sta     $C001
         sta     $E000
         sta     $E001
-@ret:
-        rts ; shouldn't need to write to $E000 because irq is already acknowledged?
+        rts

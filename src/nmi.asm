@@ -4,6 +4,25 @@ nmi:    pha
         tya
         pha
         lda     #$00
+        sta     pollsThisFrame
+        sta     gameCycleCount
+        lda     framesToWait
+        bne     @restOfNmi
+        lda     pollIndex
+        bne     @scheduleNextPoll
+        jsr     pollControllerButtons
+        jsr     generateNextPseudorandomNumber
+        inc     pollsThisFrame
+        jsr     setNextPollIndex
+@scheduleNextPoll:
+; If framesToWait == 0, immediately create irq
+        lda     framesToWait ; feels redundant
+        bne     @restOfNmi
+        ldy     pollIndex
+        lda     (pollAddr),y
+        jsr     makeIrqRequest
+@restOfNmi:
+        lda     #$00
         sta     oamStagingLength
         jsr     render
         dec     sleepCounter
@@ -20,7 +39,6 @@ nmi:    pha
         lda     #$00
         adc     frameCounter+1
         sta     frameCounter+1
-        jsr     generateNextPseudorandomNumber
         lda     #$00
         sta     ppuScrollX
         sta     PPUSCROLL
@@ -28,7 +46,6 @@ nmi:    pha
         sta     PPUSCROLL
         lda     #$01
         sta     verticalBlankingInterval
-        jsr     pollControllerButtons
         pla
         tay
         pla
