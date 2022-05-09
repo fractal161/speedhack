@@ -6,7 +6,12 @@ nmi:    pha
         lda     #$00
         sta     pollsThisFrame
         sta     gameCycleCount
-        lda     framesToWait
+; Check if active piece control
+        lda     playState
+        cmp     #$01
+        bne     @notInGame
+        dec     framesToWait
+        ; lda     framesToWait
         bne     @restOfNmi
         lda     pollIndex
         bne     @scheduleNextPoll
@@ -21,6 +26,10 @@ nmi:    pha
         ldy     pollIndex
         lda     (pollAddr),y
         jsr     makeIrqRequest
+        jmp     @restOfNmi
+@notInGame:
+        jsr     pollControllerButtons
+        jsr     generateNextPseudorandomNumber
 @restOfNmi:
         lda     #$00
         sta     oamStagingLength

@@ -46,6 +46,7 @@ setNextPollIndex:
         inc     framesToWait
         jmp     @while
 @ret:
+        sta     pollIndex
         rts
 ; very likely mod 241 issues
 ; pollTmp has old index pollIndex has new index

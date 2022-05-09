@@ -16,6 +16,7 @@ playState_playerControlsActiveTetrimino:
         bne     @ret ; if framesToWait == 0 then more polls will happen later in the frame
 ; idle when gameCycleCount >= pollsThisFrame
 @waitForNextPoll:
+        lda     gameCycleCount
         cmp     pollsThisFrame
         bcs     @waitForNextPoll
         jmp     playState_playerControlsActiveTetrimino

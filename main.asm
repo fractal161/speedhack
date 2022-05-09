@@ -279,8 +279,13 @@ initRamContinued:
         stx     rng_seed+1
         lda     #$01
         sta     subFrameTop
-        lda     #$01
+        lda     #$02
         sta     pollsPerFrame
+        ; 80C7 for now (CHANGE THIS OFTEN CHANGE THIS OFTEN)
+        lda     #$C9
+        sta     pollAddr
+        lda     #$80
+        sta     pollAddr+1
         ldy     #$00
         sty     ppuScrollX
         sty     PPUSCROLL
@@ -1084,6 +1089,8 @@ gameModeState_initGameState:
         sta     demoButtonsAddr
         sta     spawnID
         sta     pollIndex
+        lda     #$01
+        sta     framesToWait
         lda     #>demoButtonsTable
         sta     demoButtonsAddr+1
         lda     #$03
