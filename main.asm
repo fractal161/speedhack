@@ -2167,10 +2167,9 @@ render_mode_play_and_demo:
         lda     outOfDateRenderFlags
         and     #$40
         beq     @renderTetrisFlashAndSound
-        lda     #$00
-        sta     tmpCurrentPiece
+        ldx     currentPiece
+        lda     tetriminoTypeFromOrientation, x
 @renderPieceStat:
-        lda     tmpCurrentPiece
         asl     a
         tax
         lda     pieceToPpuStatAddr,x
@@ -2181,10 +2180,6 @@ render_mode_play_and_demo:
         sta     PPUDATA
         lda     statsByType,x
         jsr     twoDigsToPPU
-        inc     tmpCurrentPiece
-        lda     tmpCurrentPiece
-        cmp     #$07
-        bne     @renderPieceStat
         lda     outOfDateRenderFlags
         and     #$BF
         sta     outOfDateRenderFlags
