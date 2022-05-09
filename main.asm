@@ -279,13 +279,8 @@ initRamContinued:
         stx     rng_seed+1
         lda     #$01
         sta     subFrameTop
-        lda     #$02
+        lda     #$01
         sta     pollsPerFrame
-        ; 80C7 for now (CHANGE THIS OFTEN CHANGE THIS OFTEN)
-        lda     #$C9
-        sta     pollAddr
-        lda     #$80
-        sta     pollAddr+1
         ldy     #$00
         sty     ppuScrollX
         sty     PPUSCROLL
