@@ -1,5 +1,12 @@
 ; Do this whenever gameCycleCount < pollsThisFrame
 playState_playerControlsActiveTetrimino:
+        lda     pollsThisFrame ; if there's been a poll already go to nmi
+        beq     @checkIfAnotherPollThisFrame
+@waitForNextPoll:
+        lda     gameCycleCount
+        cmp     pollsThisFrame
+        bcs     @waitForNextPoll
+@gameLogic:
         inc     fallTimer
         jsr     shift_tetrimino
         jsr     rotate_tetrimino
@@ -8,18 +15,11 @@ playState_playerControlsActiveTetrimino:
         lda     playState
         cmp     #$02
         beq     @retAndClear ; Exit if piece has locked
-        lda     gameCycleCount
-        cmp     pollsThisFrame
-; If gameCycleCount < pollsThisFrame then we run another cycle
-        bcc     playState_playerControlsActiveTetrimino
+@checkIfAnotherPollThisFrame:
         lda     framesToWait
         bne     @ret ; if framesToWait == 0 then more polls will happen later in the frame
-; idle when gameCycleCount >= pollsThisFrame
-@waitForNextPoll:
-        lda     gameCycleCount
-        cmp     pollsThisFrame
-        bcs     @waitForNextPoll
-        jmp     playState_playerControlsActiveTetrimino
+        ; idle when gameCycleCount >= pollsThisFrame
+        jmp     @waitForNextPoll
 @retAndClear:
         sei ; so no interrupts are called during lock/line clear delay
 @ret:
