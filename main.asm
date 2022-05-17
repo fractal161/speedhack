@@ -199,7 +199,7 @@ JOY2_APUFC      := $4017                        ; read: bits 0-4 joy data lines 
 MMC1_CHR0       := $BFFF
 MMC1_CHR1       := $DFFF
 
-maxPollRate      = 3
+maxPollRate      = 6
 
 .segment        "PRG_chunk1": absolute
 
