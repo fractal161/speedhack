@@ -2577,7 +2577,7 @@ playState_lockTetrimino:
         lda     #$00
         sta     lineIndex
         jsr     updatePlayfield
-        jsr     updateMusicSpeed
+        ; jsr     updateMusicSpeed
         inc     playState
 @ret:   rts
 
@@ -2731,7 +2731,7 @@ playState_receiveGarbage:
 garbageLines:
         .byte   $00,$00,$01,$02,$04
 playState_updateLinesAndStatistics:
-        jsr     updateMusicSpeed
+        ; jsr     updateMusicSpeed
         lda     completedLines
         bne     @linesCleared
         jmp     addHoldDownPoints
