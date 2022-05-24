@@ -40,7 +40,13 @@ lineIndex:	.res 1	; $0057
 curtainRow:	.res 1	; $0058
 startHeight:	.res 1	; $0059
 garbageHole:	.res 1	; $005A
-.res $45
+binary32: .res 4  ; $005B
+bcd32: .res 4 ; $005F
+exp: .res 1 ; $0063
+product24: .res 3 ; $0064
+factorA24: .res 3 ; $0067
+factorB24: .res 3 ; $006A
+.res $33
 spriteXOffset:	.res 1	; $00A0
 spriteYOffset:	.res 1	; $00A1
 spriteIndexInOamContentLookup:	.res 1	; $00A2

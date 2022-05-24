@@ -148,7 +148,7 @@ binToBcd:
         cpy #$20     ;End of table?
         bcc @nextDigit   ;No? go back with next dec weight
         lda binary32   ;Yes? put remainder in acc and put in BCD reg
-BCDREG:
+bcdReg:
         asl a
         asl a
         asl a
