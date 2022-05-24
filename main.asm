@@ -3087,6 +3087,7 @@ gameModeState_checkForResetKeyCombo:
 @reset: jsr     updateAudio2
         lda     #$00
         sta     gameMode
+        sta     playState
         rts
 
 ; It looks like the jsr _must_ do nothing, otherwise reg a != gameModeState in mainLoop and there would not be any waiting on vsync
