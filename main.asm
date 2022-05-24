@@ -523,6 +523,7 @@ gameMode_titleScreen:
         ; sta     gameMode
         rts
 
+; And pause apparently
 render_mode_legal_and_title_screens:
         lda     currentPpuCtrl
         and     #$FC
@@ -533,8 +534,9 @@ render_mode_legal_and_title_screens:
         sta     ppuScrollY
         sta     PPUSCROLL
         lda     gameMode
-        bne     @renderSpeed
-        rts
+        beq     @ret
+        lda     musicStagingNoiseHi
+        bne     @ret
 @renderSpeed:
         lda     #$22
         sta     PPUADDR
@@ -553,6 +555,7 @@ render_mode_legal_and_title_screens:
         sta     gameType
         lda     #$04
         lda     gameMode
+@ret:
         rts
 
 gameMode_gameTypeMenu:
