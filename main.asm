@@ -574,8 +574,6 @@ render_mode_legal_and_title_screens:
 
 gameMode_gameTypeMenu:
         inc     initRam
-        ; lda     #$10
-        ; jsr     setMMC1Control
         lda     #$01
         sta     renderMode
         jsr     updateAudioWaitForNmiAndDisablePpuRendering
@@ -710,8 +708,6 @@ L830B:  lda     #$FF
 
 gameMode_levelMenu:
         inc     initRam
-        ; lda     #$10
-        ; jsr     setMMC1Control
         jsr     updateAudio2
         lda     #$01
         sta     renderMode
@@ -2955,7 +2951,6 @@ gameModeState_handleGameOver:
         jsr     memset_page
         lda     #$00
         sta     vramRow
-        lda     #$00
         sta     playState
         jsr     updateAudioWaitForNmiAndResetOamStaging
         lda     #$03
@@ -3584,8 +3579,6 @@ highScoreIndexToHighScoreScoresOffset:
         .byte   $00,$03,$06,$09,$0C,$0F,$12,$15
 highScoreEntryScreen:
         inc     initRam
-        ; lda     #$10
-        ; jsr     setMMC1Control
         lda     #$09
         jsr     setMusicTrack
         lda     #$02
@@ -4874,15 +4867,6 @@ changeCHRBank0:
         adc     #$02
         stx     $8000
         sta     $8001
-        ; sta     MMC1_CHR0
-        ; lsr     a
-        ; sta     MMC1_CHR0
-        ; lsr     a
-        ; sta     MMC1_CHR0
-        ; lsr     a
-        ; sta     MMC1_CHR0
-        ; lsr     a
-        ; sta     MMC1_CHR0
         rts
 
 changeCHRBank1:
@@ -4906,16 +4890,6 @@ changeCHRBank1:
         adc     #$01
         stx     $8000
         sta     $8001
-
-        ; sta     MMC1_CHR1
-        ; lsr     a
-        ; sta     MMC1_CHR1
-        ; lsr     a
-        ; sta     MMC1_CHR1
-        ; lsr     a
-        ; sta     MMC1_CHR1
-        ; lsr     a
-        ; sta     MMC1_CHR1
         rts
 
 changePRGBank:
@@ -4929,22 +4903,6 @@ changePRGBank:
         adc     #$01
         stx     $8000
         sta     $8001
-        ; ldx     #$46
-        ; clc
-        ; adc     #$01
-        ; stx     $8000
-        ; sta     $8001
-        ; ldx     #$06
-        ; stx     $8000
-        ; sta     MMC1_PRG
-        ; lsr     a
-        ; sta     MMC1_PRG
-        ; lsr     a
-        ; sta     MMC1_PRG
-        ; lsr     a
-        ; sta     MMC1_PRG
-        ; lsr     a
-        ; sta     MMC1_PRG
         rts
 
 game_palette:
