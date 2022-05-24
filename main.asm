@@ -546,29 +546,6 @@ render_mode_legal_and_title_screens:
         sta     PPUSCROLL
         sta     ppuScrollY
         sta     PPUSCROLL
-        lda     gameMode
-        beq     @ret
-        lda     musicStagingNoiseHi
-        bne     @ret
-@renderSpeed:
-        lda     #$22
-        sta     PPUADDR
-        lda     #$CA
-        sta     PPUADDR
-        lda     pollsPerFrame
-        sta     PPUDATA
-        lda     #$4F
-        sta     PPUDATA
-        lda     subFrameTop
-        sta     PPUDATA
-
-        lda     #$00
-        sta     levelNumber
-        lda     #$00
-        sta     gameType
-        lda     #$04
-        lda     gameMode
-@ret:
         rts
 
 gameMode_gameTypeMenu:
