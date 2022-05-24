@@ -4759,6 +4759,7 @@ diffOldAndNewButtons:
         sty     heldButtons
         rts
 
+.include "src/math.asm"
 
 memset_ppu_page_and_more:
         sta     tmp1
