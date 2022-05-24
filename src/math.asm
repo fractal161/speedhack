@@ -3,45 +3,45 @@
 ;EXP and stores it in locations bcd32 to bcd32+3. It Then packs the dp value
 ;in the MSBY high nibble location bcd32+3.
 ; source: http://www.6502.org/source/integers/32bcdbin.htm
-BCD_BIN:
-        lda #0
+bcdToBin:
+        lda #$00
         sta exp
         sta binary32
         sta binary32+1
         sta binary32+2
         sta binary32+3 ;Reset MSBY
-        jsr NXT_BCD  ;Get next BCD value
+        jsr nextBcd  ;Get next BCD value
         sta binary32   ;Store in LSBY
         ldx #$07
-GET_NXT:
-        jsr NXT_BCD  ;Get next BCD value
-        jsr MPY10
+@getNext:
+        jsr nextBcd  ;Get next BCD value
+        jsr mpy10
         dex
-        bne GET_NXT
+        bne @getNext
         asl exp      ;Move dp nibble left
         asl exp
         asl exp
         asl exp
         lda binary32+3 ;Get MSBY and filter it
-        and #$0f
+        and #$0F
         ora exp      ;Pack dp
         sta binary32+3
         rts
-NXT_BCD:
+nextBcd:
         ldy #$04
         lda #$00
-MV_BITS:
+@moveBits:
         asl bcd32
         rol bcd32+1
         rol bcd32+2
         rol bcd32+3
-        rol a
+        rol A
         dey
-        bne MV_BITS
+        bne @moveBits
         rts
 
-        ;Conversion subroutine for BCD_BIN
-MPY10:
+        ;Conversion subroutine for bcdToBin
+mpy10:
         sta tmp2    ;Save digit just entered
         lda binary32+3 ;Save partial result on
         pha          ;stack
@@ -89,65 +89,64 @@ MPY10:
         sta binary32+3
         rts
 
-BIN_BCD:
+binToBcd:
         lda binary32+3 ;Get MSBY
-        and #$f0     ;Filter out low nibble
+        and #$F0     ;Filter out low nibble
         lsr a        ;Move hi nibble right (dp)
         lsr a
         lsr a
         lsr a
         sta exp      ;store dp
         lda binary32+3
-        and #$0f     ;Filter out high nibble
+        and #$0F     ;Filter out high nibble
         sta binary32+3
-BCD_DP:
         ldy #$00     ;Clear table pointer
-NXTDIG:
+@nextDigit:
         ldx #$00     ;Clear digit count
-SUB_MEM:
+@sub_mem:
         lda binary32   ;Get LSBY of binary value
         sec
-        sbc SUBTBL,y ;Subtract LSBY + y of table value
+        sbc subTbl,y ;Subtract LSBY + y of table value
         sta binary32   ;Return result
         lda binary32+1 ;Get next byte of binary value
         iny
-        sbc SUBTBL,y ;Subtract next byte of table value
+        sbc subTbl,y ;Subtract next byte of table value
         sta binary32+1
         lda binary32+2 ;Get next byte
         iny
-        sbc SUBTBL,y ;Subtract next byte of table
+        sbc subTbl,y ;Subtract next byte of table
         sta binary32+2
         lda binary32+3 ;Get MSBY of binary value
         iny
-        sbc SUBTBL,y ;Subtract MSBY of table
-        bcc ADBACK   ;If result is neg go add back
+        sbc subTbl,y ;Subtract MSBY of table
+        bcc @addBack   ;If result is neg go add back
         sta binary32+3 ;Store MSBY then point back to LSBY of table
         dey
         dey
         dey
         inx
-        jmp SUB_MEM  ;Go subtract again
-ADBACK:
+        jmp @sub_mem  ;Go subtract again
+@addBack:
         dey          ;Point back to LSBY of table
         dey
         dey
         lda binary32   ;Get LSBY of binary value and add LSBY
-        adc SUBTBL,y ;of table value
+        adc subTbl,y ;of table value
         sta binary32
         lda binary32+1 ;Get next byte
         iny
-        adc SUBTBL,y ;Add next byte of table
+        adc subTbl,y ;Add next byte of table
         sta binary32+1
         lda binary32+2 ;Next byte
         iny
-        adc SUBTBL,y ;Add next byte of table
+        adc subTbl,y ;Add next byte of table
         sta binary32+2
         txa          ;Put dec count in acc
-        jsr BCDREG   ;Put in BCD reg
+        jsr bcdReg   ;Put in BCD reg
         iny
         iny
         cpy #$20     ;End of table?
-        bcc NXTDIG   ;No? go back with next dec weight
+        bcc @nextDigit   ;No? go back with next dec weight
         lda binary32   ;Yes? put remainder in acc and put in BCD reg
 BCDREG:
         asl a
@@ -155,25 +154,25 @@ BCDREG:
         asl a
         asl a
         ldx #$04
-SHFT_L:
+@shiftL:
         asl a
         rol bcd32
         rol bcd32+1
         rol bcd32+2
         rol bcd32+3
         dex
-        bne SHFT_L
+        bne @shiftL
         rts
 
-SUBTBL:
-        .byte $00,$e1,$f5,$05
+subTbl:
+        .byte $00,$E1,$F5,$05
         .byte $80,$96,$98,$00
-        .byte $40,$42,$0f,$00
-        .byte $a0,$86,$01,$00
+        .byte $40,$42,$0F,$00
+        .byte $A0,$86,$01,$00
         .byte $10,$27,$00,$00
-        .byte $e8,$03,$00,$00
+        .byte $E8,$03,$00,$00
         .byte $64,$00,$00,$00
-        .byte $0a,$00,$00,$00
+        .byte $0A,$00,$00,$00
 
 ; source: https://codebase64.org/doku.php?id=base:24bit_multiplication_24bit_product
 unsigned_mul24:
@@ -219,7 +218,7 @@ unsigned_mul24:
         jmp @loop ; end while
 
 unsigned_div24:
-        lda #0	        ;preset remainder to 0
+        lda #$00	        ;preset remainder to 0
         sta remainder
         sta remainder+1
         sta remainder+2
