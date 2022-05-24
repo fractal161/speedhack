@@ -1539,26 +1539,23 @@ loadSpriteIntoOamStaging:
         clc
         adc     spriteYOffset
         sta     oamStaging,x
-        inx
         iny
         lda     (generalCounter),y
-        sta     oamStaging,x
-        inx
+        sta     oamStaging+1,x
         iny
         lda     (generalCounter),y
-        sta     oamStaging,x
-        inx
+        sta     oamStaging+2,x
         iny
         lda     (generalCounter),y
         clc
         adc     spriteXOffset
-        sta     oamStaging,x
-        inx
+        sta     oamStaging+3,x
         iny
         lda     #$04
         clc
         adc     oamStagingLength
         sta     oamStagingLength
+        tax
         jmp     @whileNotFF
 
 @ret:   rts
