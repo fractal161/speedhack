@@ -361,10 +361,10 @@ initRamContinued:
 
 branchOnGameMode:
         lda     gameMode
-        cmp     #$04
-        bne     @not4
+        cmp     #$03
+        bne     @not3
         jmp     gameMode_playAndEndingHighScore
-@not4:
+@not3:
         cmp     #$00
         bne     @not0
         jmp     gameMode_legalScreen
@@ -372,15 +372,15 @@ branchOnGameMode:
         cmp     #$01
         bne     @not1
         jmp     gameMode_titleScreen
+; @not1:
+;         cmp     #$02
+;         bne     @not2
+;         jmp     gameMode_gameTypeMenu
 @not1:
         cmp     #$02
         bne     @not2
-        jmp     gameMode_gameTypeMenu
-@not2:
-        cmp     #$03
-        bne     @not3
         jmp     gameMode_levelMenu
-@not3:
+@not2:
         cmp     #$05
         bne     @not5
         jmp     gameMode_playAndEndingHighScore
@@ -407,7 +407,7 @@ gameMode_playAndEndingHighScore:
 @no_init:
         jsr     gameModeState_updateCountersAndNonPlayerState
         jsr     gameModeState_handleGameOver
-        cmp     #$03
+        cmp     #$02
         bne     @notOverYet
         rts
 @notOverYet:
@@ -2678,8 +2678,9 @@ gameModeState_handleGameOver:
         lda     #$00
         sta     vramRow
         sta     playState
+        sta     gameModeState
         jsr     updateAudioWaitForNmiAndResetOamStaging
-        lda     #$03
+        lda     #$02
         sta     gameMode
         rts
 
@@ -4253,7 +4254,7 @@ updateAudioWaitForNmiAndResetOamStaging:
         cmp     #$01
         bne     @cont1
         lda     gameMode
-        cmp     #$04
+        cmp     #$03
         bne     @cont1
         lda     #$FF
         sta     $0210
