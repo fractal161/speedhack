@@ -13,11 +13,11 @@ gameMode_levelMenu:
         .addr   menu_palette
         jsr     bulkCopyToPpu
         .addr   level_menu_nametable
-        lda     gameType
-        bne     @skipTypeBHeightDisplay
-        jsr     bulkCopyToPpu
-        .addr   height_menu_nametablepalette_patch
-@skipTypeBHeightDisplay:
+;         lda     gameType
+;         bne     @skipTypeBHeightDisplay
+;         jsr     bulkCopyToPpu
+;         .addr   height_menu_nametablepalette_patch
+; @skipTypeBHeightDisplay:
         jsr     showHighScores
         jsr     waitForVBlankAndEnableNmi
         jsr     updateAudioWaitForNmiAndResetOamStaging
