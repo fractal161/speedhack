@@ -291,10 +291,13 @@ initRamContinued:
         stx     rng_seed
         dex
         stx     rng_seed+1
+; init menu values
         lda     #$01
         sta     subFrameTop
-        lda     #$01
         sta     pollsPerFrame
+        lda     #29
+        sta     startLevel
+; init boilerplate
         ldy     #$00
         sty     ppuScrollX
         sty     PPUSCROLL
