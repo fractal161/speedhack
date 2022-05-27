@@ -29,10 +29,19 @@ gameMode_levelMenu:
         jsr     updateAudioWaitForNmiAndResetOamStaging
 
 gameMode_levelMenu_processPlayerNavigation:
-
-@checkBPressed:
         lda     newlyPressedButtons
-        cmp     #$40
+        and     #$10
+        beq     @notStart
+        lda     #$00
+        sta     gameModeState
+        lda     #$02
+        sta     soundEffectSlot1Init
+        inc     gameMode
+        rts
+@notStart:
+        jsr     gameMode_levelMenu_processConfigInput
+        lda     newlyPressedButtons
+        cmp     #$20
         bne     @chooseRandomHole_1
         lda     #$02
         sta     soundEffectSlot1Init
@@ -55,6 +64,39 @@ gameMode_levelMenu_processPlayerNavigation:
         sta     garbageHole
         jsr     updateAudioWaitForNmiAndResetOamStaging
         jmp     gameMode_levelMenu_processPlayerNavigation
+
+gameMode_levelMenu_processConfigInput:
+; start with right
+        lda     newlyPressedButtons
+        cmp     #$01
+        bne     @checkLeftPressed
+@checkLeftPressed:
+        lda     newlyPressedButtons
+        cmp     #$02
+        bne     @checkDownPressed
+@checkDownPressed:
+        lda     newlyPressedButtons
+        cmp     #$04
+        bne     @checkUpPressed
+@checkUpPressed:
+        lda     newlyPressedButtons
+        cmp     #$08
+        bne     @checkAPressed
+@checkAPressed:
+        lda     newlyPressedButtons
+        cmp     #$80
+        bne     @checkBPressed
+@checkBPressed:
+        lda     newlyPressedButtons
+        cmp     #$40
+        bne     @ret
+@updateMenuItem:
+        jsr     updateMenuAddr
+@enableSfx:
+        lda     #$01
+        sta     soundEffectSlot1Init
+@ret:
+        rts
 
 ; Handle speed control
 oldSpeedMenu:
@@ -112,3 +154,15 @@ oldSpeedMenu:
         sta     pollAddr
         lda     #>scanlinePollTable ; high byte
         sta     pollAddr+1
+
+updateMenuAddr:
+        lda     menuX
+        rts
+        ; jsr     switch_s_plus_2a
+        ; .addr   levelMenu_gameType
+;
+; menuOptionOffset:
+;         .byte   $00, $01, $02, $04
+;
+; menuOptionLimits:
+;         .byte   $01, $03, $02, $09, maxPollRate-1, maxPollRate-1
