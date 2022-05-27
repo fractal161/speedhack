@@ -286,18 +286,17 @@ initRamContinued:
         sta     initMagic+3
         lda     #$9A
         sta     initMagic+4
-@continueWarmBootInit:
-        ldx     #$89
-        stx     rng_seed
-        dex
-        stx     rng_seed+1
 ; init menu values
         lda     #$01
         sta     subFrameTop
         sta     pollsPerFrame
         lda     #29
         sta     startLevel
-; init boilerplate
+@continueWarmBootInit:
+        ldx     #$89
+        stx     rng_seed
+        dex
+        stx     rng_seed+1
         ldy     #$00
         sty     ppuScrollX
         sty     PPUSCROLL
