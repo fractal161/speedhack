@@ -706,6 +706,7 @@ render_mode_menu_screens:
         sta     PPUSCROLL
         sta     ppuScrollY
         sta     PPUSCROLL
+.include "src/rendermenu.asm"
         rts
 
 gameModeState_initGameBackground:

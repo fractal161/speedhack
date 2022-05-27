@@ -40,6 +40,8 @@ gameMode_levelMenu_processPlayerNavigation:
         rts
 @notStart:
         jsr     gameMode_levelMenu_processConfigInput
+        ; jsr     stageCursorSprites
+        ; jsr     menuMusic
         lda     newlyPressedButtons
         cmp     #$20
         bne     @chooseRandomHole_1
@@ -86,10 +88,15 @@ gameMode_levelMenu_processConfigInput:
         lda     newlyPressedButtons
         cmp     #$80
         bne     @checkBPressed
+        lda     #$01
+        sta     tmp1
+        jmp     @updateMenuItem
 @checkBPressed:
         lda     newlyPressedButtons
         cmp     #$40
         bne     @ret
+        lda     #$FF
+        sta     tmp1
 @updateMenuItem:
         jsr     updateMenuAddr
 @enableSfx:
@@ -97,6 +104,33 @@ gameMode_levelMenu_processConfigInput:
         sta     soundEffectSlot1Init
 @ret:
         rts
+
+updateMenuAddr:
+        lda     menuX
+        jsr     switch_s_plus_2a
+        .addr   levelMenu_gameType
+
+levelMenu_gameType:
+        lda     gameType
+        eor     #$01
+        sta     gameType
+        lda     #$01
+        sta     menuBufferSize
+        lda     #$21
+        sta     menuBufferAddr+1
+        lda     #$0C
+        sta     menuBufferAddr
+        lda     #$0A
+        clc
+        adc     gameType
+        sta     menuBuffer
+        rts
+
+menuOptionOffset:
+        .byte   $00, $01, $02, $04
+
+menuOptionLimits:
+        .byte   $01, $03, $02, $09, maxPollRate-1, maxPollRate-1
 
 ; Handle speed control
 oldSpeedMenu:
@@ -154,15 +188,3 @@ oldSpeedMenu:
         sta     pollAddr
         lda     #>scanlinePollTable ; high byte
         sta     pollAddr+1
-
-updateMenuAddr:
-        lda     menuX
-        rts
-        ; jsr     switch_s_plus_2a
-        ; .addr   levelMenu_gameType
-;
-; menuOptionOffset:
-;         .byte   $00, $01, $02, $04
-;
-; menuOptionLimits:
-;         .byte   $01, $03, $02, $09, maxPollRate-1, maxPollRate-1
