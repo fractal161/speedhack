@@ -89,8 +89,8 @@ gameMode_levelMenu_processConfigInput:
         lda     newlyPressedButtons
         cmp     #$01
         bne     @checkLeftPressed
-        inc     menuY
-        ldx     menuX
+        inc     menuX
+        ldx     menuY
         lda     gameType
 ; since level select has more options with b-type height
         beq     @dontAddBTypeOffset
@@ -99,10 +99,10 @@ gameMode_levelMenu_processConfigInput:
         adc     #MENU_SIZE
         tax
 @dontAddBTypeOffset:
-        lda     menuY
+        lda     menuX
         cmp     menuOptionCount,x
         bcc     @inRange
-        dec     menuY
+        dec     menuX
 @inRange:
         jmp     @enableSfx
 
@@ -110,45 +110,45 @@ gameMode_levelMenu_processConfigInput:
         lda     newlyPressedButtons
         cmp     #$02
         bne     @checkDownPressed
-        lda     menuY
+        lda     menuX
         beq     @enableSfx
-        dec     menuY
+        dec     menuX
         jmp     @enableSfx
 @checkDownPressed:
         lda     newlyPressedButtons
         cmp     #$04
         bne     @checkUpPressed
-        lda     menuX
+        lda     menuY
         clc
         adc     #$01
         cmp     #MENU_SIZE
         bcs     @atMaxRow
-        sta     menuX
-        lda     #$00
         sta     menuY
+        lda     #$00
+        sta     menuX
         jmp     @enableSfx
 @atMaxRow:
         sec
         sbc     #$01
-        sta     menuX
+        sta     menuY
         jmp     @enableSfx
 @checkUpPressed:
         lda     newlyPressedButtons
         cmp     #$08
         bne     @checkAPressed
-        lda     menuX
+        lda     menuY
         sec
         sbc     #$01
         cmp     #$FF
         beq     @atMinRow
-        sta     menuX
-        lda     #$00
         sta     menuY
+        lda     #$00
+        sta     menuX
         jmp     @enableSfx
 @atMinRow:
         clc
         adc     #$01
-        sta     menuX
+        sta     menuY
         jmp     @enableSfx
 @checkAPressed:
         lda     newlyPressedButtons
@@ -172,7 +172,7 @@ gameMode_levelMenu_processConfigInput:
         rts
 
 updateMenuAddr:
-        lda     menuX
+        lda     menuY
         jsr     switch_s_plus_2a
         .addr   levelMenu_gameType
         .addr   levelMenu_music
@@ -239,7 +239,7 @@ menuOptionLimits:
 stageCursorSprites:
 ; row sprite
         ldx     oamStagingLength
-        lda     menuX
+        lda     menuY
         asl
         asl
         asl
@@ -267,13 +267,13 @@ stageCursorSprites:
         sta     oamStaging+1,x
         lda     #$00
         sta     oamStaging+2,x
-        lda     menuY
+        lda     menuX
         asl
         asl
         asl
         clc
         adc     #$60
-        sta     tmp2
+        sta     tmp2 ; arrow x-position
         sta     oamStaging+3,x
         txa
         clc
