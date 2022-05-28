@@ -56,9 +56,7 @@ pztemp          := mathRAM+$D
 menuRam         := $0070
 menuX           := menuRam+0
 menuY           := menuRam+1
-menuBufferSize  := menuRam+2
-menuBufferAddr  := menuRam+3
-menuBuffer      := menuRam+5
+menuBuffer      := menuRam+2
 
 spriteXOffset   := $00A0
 spriteYOffset   := $00A1

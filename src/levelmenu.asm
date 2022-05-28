@@ -169,15 +169,17 @@ levelMenu_gameType:
         eor     #$01
         sta     gameType
         lda     #$01
-        sta     menuBufferSize
+        sta     menuBuffer
         lda     #$21
-        sta     menuBufferAddr+1
+        sta     menuBuffer+1
         lda     #$0C
-        sta     menuBufferAddr
+        sta     menuBuffer+2
         lda     #$0A
         clc
         adc     gameType
-        sta     menuBuffer
+        sta     menuBuffer+3
+        lda     #$00
+        sta     menuBuffer+4
         rts
 
 levelMenu_music:

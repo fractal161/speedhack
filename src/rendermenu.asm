@@ -1,15 +1,27 @@
-        lda     menuBufferAddr+1
-        sta     PPUADDR
-        lda     menuBufferAddr
-        sta     PPUADDR
+; begin reading buffer. instructions are as follows:
+; first byte is length of patch, x
+; next two are start addr
+; next x are the patch data
+; repeat until $00 is read for the patch length
         ldx     #$00
-@loop:
-        cpx     menuBufferSize
+@whileSizeNot00:
+        lda     menuBuffer,x
         beq     @finish
+        sta     generalCounter
+        inx
+        lda     menuBuffer,x
+        sta     PPUADDR
+        inx
+        lda     menuBuffer,x
+        sta     PPUADDR
+        inx
+@loop:
         lda     menuBuffer,x
         sta     PPUDATA
         inx
-        jmp     @loop
+        dec     generalCounter
+        bne     @loop
+        jmp     @whileSizeNot00
 @finish:
         lda     #$00
-        sta     menuBufferSize
+        sta     menuBuffer
