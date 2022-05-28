@@ -302,6 +302,141 @@ setStartLevel:
         rts
 
 levelMenu_speed:
+        lda     #$0E
+        sta     menuBuffer
+        lda     #$21
+        sta     menuBuffer+1
+        lda     #$CC
+        sta     menuBuffer+2
+        lda     #$00
+        sta     menuBuffer+17 ; ?????
+; update fraction
+        lda     #$01
+        sta     tmp1
+        lda     #maxPollRate+1
+        sta     tmp2
+        lda     menuX
+        tax
+        lda     pollsPerFrame,x
+        clc
+        adc     generalCounter
+        jsr     restrictToRange
+        sta     pollsPerFrame,x
+; Update index
+        ldx     pollsPerFrame
+        lda     scanlineIndexTable,x
+        sta     pollAddr
+        lda     #>scanlinePollTable ; high byte
+        sta     pollAddr+1
+; convert to decimal
+        lda     #$70
+        sta     factorA24
+        lda     #$17
+        sta     factorA24+1 ; store 6000
+        lda     pollsPerFrame
+        sta     factorB24
+        lda     #$00
+        sta     factorA24+2
+        sta     factorB24+1
+        sta     factorB24+2
+        jsr     unsigned_mul24
+        lda     product24
+        sta     dividend
+        lda     product24+1
+        sta     dividend+1
+        lda     product24+2
+        sta     dividend+2
+        lda     subFrameTop
+        sta     divisor
+        lda     #$00
+        sta     divisor+1
+        sta     divisor+2
+        jsr     unsigned_div24
+        lda     dividend
+        sta     binary32
+        lda     dividend+1
+        sta     binary32+1
+        lda     dividend+2
+        sta     binary32+2
+        lda     #$00
+        sta     binary32+3
+        jsr     binToBcd
+; write to patch buffer
+        lda     pollsPerFrame
+        sta     menuBuffer+3
+        lda     #$4F
+        sta     menuBuffer+4
+        lda     subFrameTop
+        sta     menuBuffer+5
+        lda     #$53
+        sta     menuBuffer+6
+        lda     #$54
+        sta     menuBuffer+7
+        ldx     #$08
+; write thousands/hundreds if exists
+        lda     bcd32+2
+        pha
+        lsr
+        lsr
+        lsr
+        lsr
+        cmp     #$00
+        beq     @noThousands
+        sta     menuBuffer,x
+        inx
+@noThousands:
+        pla
+        and     #$0F
+        cmp     #$00
+        beq     @noHundreds
+        sta     menuBuffer,x
+        inx
+@noHundreds:
+; tens/ones
+        lda     bcd32+1
+        pha
+        lsr
+        lsr
+        lsr
+        lsr
+        sta     menuBuffer,x
+        inx
+        pla
+        and     #$0F
+        sta     menuBuffer,x
+        inx
+; decimal and subsequent digits
+        lda     #$6F
+        sta     menuBuffer,x
+        inx
+        lda     bcd32
+        pha
+        lsr
+        lsr
+        lsr
+        lsr
+        sta     menuBuffer,x
+        inx
+        pla
+        and     #$0F
+        sta     menuBuffer,x
+        inx
+
+; hz
+        lda     #$11
+        sta     menuBuffer,x
+        inx
+        lda     #$23
+        sta     menuBuffer,x
+        inx
+        lda     #$FF
+@fillWithFF:
+        cpx     #$11
+        bcs     @ret
+        sta     menuBuffer,x
+        inx
+        jmp     @fillWithFF
+@ret:
         rts
 
 ; first row is for a-type, second is for b-type
@@ -391,60 +526,3 @@ getArrowX:
         adc     #$08
         sta     tmp2
         rts
-
-; Handle speed control
-oldSpeedMenu:
-        lda     newlyPressedButtons
-        and     #$01
-        beq     @rightNotPressed
-        inc     pollsPerFrame
-        lda     pollsPerFrame
-        cmp     #maxPollRate+1
-        bne     @notMaxPollRate
-        dec     pollsPerFrame
-@notMaxPollRate:
-        lda     #$01
-        sta     soundEffectSlot1Init
-@rightNotPressed:
-        lda     newlyPressedButtons
-        and     #$02
-        beq     @leftNotPressed
-        dec     pollsPerFrame
-        lda     pollsPerFrame
-        cmp     #$00
-        bne     @notMinPollRate
-        inc     pollsPerFrame
-@notMinPollRate:
-        lda     #$01
-        sta     soundEffectSlot1Init
-@leftNotPressed:
-        lda     newlyPressedButtons
-        and     #$08
-        beq     @upNotPressed
-        inc     subFrameTop
-        lda     subFrameTop
-        cmp     #maxPollRate+1
-        bne     @notMaxTop
-        dec     subFrameTop
-@notMaxTop:
-        lda     #$01
-        sta     soundEffectSlot1Init
-@upNotPressed:
-        lda     newlyPressedButtons
-        and     #$04
-        beq     @downNotPressed
-        dec     subFrameTop
-        lda     subFrameTop
-        cmp     #$00
-        bne     @notMinTop
-        inc     subFrameTop
-@notMinTop:
-        lda     #$01
-        sta     soundEffectSlot1Init
-@downNotPressed:
-; Update index
-        ldx     pollsPerFrame
-        lda     scanlineIndexTable,x
-        sta     pollAddr
-        lda     #>scanlinePollTable ; high byte
-        sta     pollAddr+1
