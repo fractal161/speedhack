@@ -47,7 +47,7 @@ gameMode_levelMenu:
 
 gameMode_levelMenu_processPlayerNavigation:
         lda     newlyPressedButtons
-        and     #$10
+        cmp     #$10
         beq     @notStart
         lda     #$00
         sta     gameModeState

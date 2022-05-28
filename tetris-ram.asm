@@ -49,8 +49,8 @@ factorB24: .res 3 ; $006A
 .res 3
 menuX: .res 1
 menuY: .res 1
-menuBuffer: .res 16
-.res 30
+menuBuffer: .res 20
+.res 26
 spriteXOffset:	.res 1	; $00A0
 spriteYOffset:	.res 1	; $00A1
 spriteIndexInOamContentLookup:	.res 1	; $00A2
