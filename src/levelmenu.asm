@@ -74,10 +74,31 @@ gameMode_levelMenu_processConfigInput:
         lda     newlyPressedButtons
         cmp     #$01
         bne     @checkLeftPressed
+        inc     menuY
+        ldx     menuX
+        lda     gameType
+; since level select has more options with b-type height
+        beq     @dontAddBTypeOffset
+        txa
+        clc
+        adc     #MENU_SIZE
+        tax
+@dontAddBTypeOffset:
+        lda     menuY
+        cmp     menuOptionCount,x
+        bcc     @inRange
+        dec     menuY
+@inRange:
+        jmp     @enableSfx
+
 @checkLeftPressed:
         lda     newlyPressedButtons
         cmp     #$02
         bne     @checkDownPressed
+        lda     menuY
+        beq     @enableSfx
+        dec     menuY
+        jmp     @enableSfx
 @checkDownPressed:
         lda     newlyPressedButtons
         cmp     #$04
@@ -119,14 +140,14 @@ gameMode_levelMenu_processConfigInput:
         cmp     #$80
         bne     @checkBPressed
         lda     #$01
-        sta     tmp1
+        sta     generalCounter
         jmp     @updateMenuItem
 @checkBPressed:
         lda     newlyPressedButtons
         cmp     #$40
         bne     @ret
         lda     #$FF
-        sta     tmp1
+        sta     generalCounter
 @updateMenuItem:
         jsr     updateMenuAddr
 @enableSfx:
@@ -139,6 +160,9 @@ updateMenuAddr:
         lda     menuX
         jsr     switch_s_plus_2a
         .addr   levelMenu_gameType
+        .addr   levelMenu_music
+        .addr   levelMenu_level
+        .addr   levelMenu_speed
 
 levelMenu_gameType:
         lda     gameType
@@ -155,6 +179,20 @@ levelMenu_gameType:
         adc     gameType
         sta     menuBuffer
         rts
+
+levelMenu_music:
+        rts
+
+levelMenu_level:
+        rts
+
+levelMenu_speed:
+        rts
+
+; first row is for a-type, second is for b-type
+menuOptionCount:
+        .byte   $01, $01, $02, $02
+        .byte   $01, $01, $03, $02
 
 menuOptionOffset:
         .byte   $00, $01, $02, $04
