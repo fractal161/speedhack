@@ -217,6 +217,28 @@ levelMenu_gameType:
         rts
 
 levelMenu_music:
+        lda     #$01
+        sta     menuBuffer
+        lda     #$21
+        sta     menuBuffer+1
+        lda     #$4C
+        sta     menuBuffer+2
+        lda     #$00
+        sta     menuBuffer+4
+        lda     generalCounter
+        clc
+        adc     musicType
+        ldx     #$00
+        stx     tmp1
+        ldx     #$04
+        stx     tmp2
+        jsr     restrictToRange
+        sta     musicType
+        sta     menuBuffer+3
+        tax
+        lda     musicSelectionTable,x
+        jsr     setMusicTrack
+@ret:
         rts
 
 levelMenu_level:

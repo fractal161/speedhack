@@ -693,7 +693,7 @@ L830B:  lda     #$FF
 .include "src/levelmenu.asm"
 
 musicSelectionTable:
-        .byte   $03,$04,$05,$FF,$06,$07,$08,$FF
+        .byte   $FF,$03,$04,$05,$FF,$06,$07,$08
 render_mode_menu_screens:
         lda     currentPpuCtrl
         and     #$FC
