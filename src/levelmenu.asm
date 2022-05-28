@@ -1,3 +1,5 @@
+MENU_SIZE  = 4
+
 gameMode_levelMenu:
         inc     initRam
         jsr     updateAudio2
@@ -80,10 +82,38 @@ gameMode_levelMenu_processConfigInput:
         lda     newlyPressedButtons
         cmp     #$04
         bne     @checkUpPressed
+        lda     menuX
+        clc
+        adc     #$01
+        cmp     #MENU_SIZE
+        bcs     @atMaxRow
+        sta     menuX
+        lda     #$00
+        sta     menuY
+        jmp     @enableSfx
+@atMaxRow:
+        sec
+        sbc     #$01
+        sta     menuX
+        jmp     @enableSfx
 @checkUpPressed:
         lda     newlyPressedButtons
         cmp     #$08
         bne     @checkAPressed
+        lda     menuX
+        sec
+        sbc     #$01
+        cmp     #$FF
+        beq     @atMinRow
+        sta     menuX
+        lda     #$00
+        sta     menuY
+        jmp     @enableSfx
+@atMinRow:
+        clc
+        adc     #$01
+        sta     menuX
+        jmp     @enableSfx
 @checkAPressed:
         lda     newlyPressedButtons
         cmp     #$80
@@ -157,7 +187,7 @@ stageCursorSprites:
 ; arrow sprites
         lda     tmp1
         clc
-        adc     #$35
+        adc     #$34
         sta     oamStaging,x
         lda     #$92
         sta     oamStaging+1,x
@@ -176,7 +206,7 @@ stageCursorSprites:
         adc     #$04
         tax
         lda     tmp1
-        adc     #$48
+        adc     #$49
         sta     oamStaging,x
         lda     #$A2
         sta     oamStaging+1,x
