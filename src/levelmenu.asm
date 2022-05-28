@@ -1,5 +1,20 @@
 MENU_SIZE  = 4
 
+; a is current value, restrict to interval [tmp1 ,tmp2)
+restrictToRange:
+        cmp     tmp1
+        bmi     @tooLow
+        cmp     tmp2
+        bpl     @tooHigh
+        rts
+@tooLow:
+        lda     tmp1
+        rts
+@tooHigh:
+        dec     tmp2
+        lda     tmp2
+        rts
+
 gameMode_levelMenu:
         inc     initRam
         jsr     updateAudio2
@@ -178,8 +193,27 @@ levelMenu_gameType:
         clc
         adc     gameType
         sta     menuBuffer+3
-        lda     #$00
+        lda     #$02
         sta     menuBuffer+4
+        lda     #$21
+        sta     menuBuffer+5
+        lda     #$8E
+        sta     menuBuffer+6
+; check whether to show or clear b-type height
+        lda     gameType
+        bne     @bType
+        lda     #$FF
+        sta     menuBuffer+7
+        sta     menuBuffer+8
+        jmp     @finish
+@bType:
+        lda     #$24
+        sta     menuBuffer+7
+        lda     startHeight
+        sta     menuBuffer+8
+@finish:
+        lda     #$00
+        sta     menuBuffer+9
         rts
 
 levelMenu_music:
