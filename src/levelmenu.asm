@@ -267,13 +267,8 @@ stageCursorSprites:
         sta     oamStaging+1,x
         lda     #$00
         sta     oamStaging+2,x
-        lda     menuX
-        asl
-        asl
-        asl
-        clc
-        adc     #$60
-        sta     tmp2 ; arrow x-position
+        jsr     getArrowX ; stores arrow x in tmp2
+        lda     tmp2
         sta     oamStaging+3,x
         txa
         clc
@@ -292,6 +287,30 @@ stageCursorSprites:
         clc
         adc     #$04
         sta     oamStagingLength
+        rts
+
+getArrowX:
+        lda     menuX
+        asl
+        asl
+        asl
+        tay
+        clc
+        adc     #$60
+        sta     tmp2
+        tya
+        ora     menuY
+        ; if (x,y) is (2,2) or (1,3) add 8
+        cmp     #$12 ; 8 * 2 + 2
+        beq     @addOffset
+        cmp     #$0B ; 8 * 1 + 3
+        beq     @addOffset
+        rts
+@addOffset:
+        lda     tmp2
+        clc
+        adc     #$08
+        sta     tmp2
         rts
 
 ; Handle speed control
