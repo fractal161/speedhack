@@ -40,7 +40,7 @@ gameMode_levelMenu_processPlayerNavigation:
         rts
 @notStart:
         jsr     gameMode_levelMenu_processConfigInput
-        ; jsr     stageCursorSprites
+        jsr     stageCursorSprites
         ; jsr     menuMusic
         lda     newlyPressedButtons
         cmp     #$20
@@ -131,6 +131,29 @@ menuOptionOffset:
 
 menuOptionLimits:
         .byte   $01, $03, $02, $09, maxPollRate-1, maxPollRate-1
+
+stageCursorSprites:
+; row sprite
+        ldx     oamStagingLength
+        lda     menuX
+        asl
+        asl
+        asl
+        asl
+        clc
+        adc     #$3F
+        sta     oamStaging,x
+        lda     #$27
+        sta     oamStaging+1,x
+        lda     #$00
+        sta     oamStaging+2,x
+        lda     #$22
+        sta     oamStaging+3,x
+        lda     oamStagingLength
+        clc
+        adc     #$04
+        sta     oamStagingLength
+        rts
 
 ; Handle speed control
 oldSpeedMenu:
