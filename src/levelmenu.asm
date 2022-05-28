@@ -140,6 +140,7 @@ stageCursorSprites:
         asl
         asl
         asl
+        sta     tmp1
         clc
         adc     #$3F
         sta     oamStaging,x
@@ -149,7 +150,41 @@ stageCursorSprites:
         sta     oamStaging+2,x
         lda     #$22
         sta     oamStaging+3,x
-        lda     oamStagingLength
+        txa
+        clc
+        adc     #$04
+        tax
+; arrow sprites
+        lda     tmp1
+        clc
+        adc     #$35
+        sta     oamStaging,x
+        lda     #$92
+        sta     oamStaging+1,x
+        lda     #$00
+        sta     oamStaging+2,x
+        lda     menuY
+        asl
+        asl
+        asl
+        clc
+        adc     #$60
+        sta     tmp2
+        sta     oamStaging+3,x
+        txa
+        clc
+        adc     #$04
+        tax
+        lda     tmp1
+        adc     #$48
+        sta     oamStaging,x
+        lda     #$A2
+        sta     oamStaging+1,x
+        lda     #$00
+        sta     oamStaging+2,x
+        lda     tmp2
+        sta     oamStaging+3,x
+        txa
         clc
         adc     #$04
         sta     oamStagingLength
