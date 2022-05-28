@@ -241,7 +241,64 @@ levelMenu_music:
 @ret:
         rts
 
-levelMenu_level:
+levelMenu_level: ; starts at 218c
+        lda     #$01
+        sta     menuBuffer
+        lda     #$21
+        sta     menuBuffer+1
+        lda     #$00
+        sta     menuBuffer+4
+        sta     tmp1
+        lda     menuX
+        cmp     #$02
+        beq     @changeHeight
+        cmp     #$00
+        beq     @changeTens
+        lda     #$0A
+        sta     tmp2
+        lda     #$8D
+        sta     menuBuffer+2
+        lda     generalCounter
+        clc
+        adc     startLevelOnes
+        jsr     restrictToRange
+        sta     startLevelOnes
+        sta     menuBuffer+3
+        jsr     setStartLevel
+        rts
+@changeTens:
+        lda     #$03
+        sta     tmp2
+        lda     #$8C
+        sta     menuBuffer+2
+        lda     generalCounter
+        clc
+        adc     startLevelTens
+        jsr     restrictToRange
+        sta     startLevelTens
+        sta     menuBuffer+3
+        jsr     setStartLevel
+        rts
+
+@changeHeight:
+        lda     #$06
+        sta     tmp2
+        lda     generalCounter
+        clc
+        adc     startHeight
+        jsr     restrictToRange
+        sta     startHeight
+        sta     menuBuffer+3
+        lda     #$8F
+        sta     menuBuffer+2
+        rts
+
+setStartLevel:
+        ldx     startLevelTens
+        lda     multBy10Table,x
+        clc
+        adc     startLevelOnes
+        sta     startLevel
         rts
 
 levelMenu_speed:

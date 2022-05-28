@@ -56,7 +56,9 @@ pztemp          := mathRAM+$D
 menuRam         := $0070
 menuX           := menuRam+0
 menuY           := menuRam+1
-menuBuffer      := menuRam+2
+startLevelOnes  := menuRam+2
+startLevelTens  := menuRam+3
+menuBuffer      := menuRam+4
 
 spriteXOffset   := $00A0
 spriteYOffset   := $00A1
@@ -298,6 +300,10 @@ initRamContinued:
         sta     pollsPerFrame
         lda     #29
         sta     startLevel
+        lda     #$02
+        sta     startLevelTens
+        lda     #$09
+        sta     startLevelOnes
 @continueWarmBootInit:
         ldx     #$89
         stx     rng_seed
