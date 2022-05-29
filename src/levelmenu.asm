@@ -37,7 +37,14 @@ gameMode_levelMenu:
 ; @skipTypeBHeightDisplay:
         jsr     showHighScores
         jsr     waitForVBlankAndEnableNmi
+        jsr     stageGameType
         jsr     updateAudioWaitForNmiAndResetOamStaging
+        jsr     stageMusicType
+        jsr     updateAudioWaitForNmiAndResetOamStaging
+        jsr     stageLevel
+        jsr     updateAudioWaitForNmiAndResetOamStaging
+        jsr     stageSpeed
+        jsr     stageCursorSprites
         lda     #$00
         sta     PPUSCROLL
         lda     #$00
@@ -183,6 +190,7 @@ levelMenu_gameType:
         lda     gameType
         eor     #$01
         sta     gameType
+stageGameType:
         lda     #$01
         sta     menuBuffer
         lda     #$21
@@ -217,14 +225,6 @@ levelMenu_gameType:
         rts
 
 levelMenu_music:
-        lda     #$01
-        sta     menuBuffer
-        lda     #$21
-        sta     menuBuffer+1
-        lda     #$4C
-        sta     menuBuffer+2
-        lda     #$00
-        sta     menuBuffer+4
         lda     generalCounter
         clc
         adc     musicType
@@ -234,6 +234,16 @@ levelMenu_music:
         stx     tmp2
         jsr     restrictToRange
         sta     musicType
+stageMusicType:
+        lda     #$01
+        sta     menuBuffer
+        lda     #$21
+        sta     menuBuffer+1
+        lda     #$4C
+        sta     menuBuffer+2
+        lda     #$00
+        sta     menuBuffer+4
+        lda     musicType
         sta     menuBuffer+3
         tax
         lda     musicSelectionTable,x
@@ -293,6 +303,20 @@ levelMenu_level: ; starts at 218c
         sta     menuBuffer+2
         rts
 
+stageLevel:
+        lda     #$02
+        sta     menuBuffer
+        lda     #$21
+        sta     menuBuffer+1
+        lda     #$8C
+        sta     menuBuffer+2
+        lda     startLevelTens
+        sta     menuBuffer+3
+        lda     startLevelOnes
+        sta     menuBuffer+4
+        lda     #$00
+        sta     menuBuffer+5
+
 setStartLevel:
         ldx     startLevelTens
         lda     multBy10Table,x
@@ -302,14 +326,6 @@ setStartLevel:
         rts
 
 levelMenu_speed:
-        lda     #$0E
-        sta     menuBuffer
-        lda     #$21
-        sta     menuBuffer+1
-        lda     #$CC
-        sta     menuBuffer+2
-        lda     #$00
-        sta     menuBuffer+17 ; ?????
 ; update fraction
         lda     #$01
         sta     tmp1
@@ -328,6 +344,15 @@ levelMenu_speed:
         sta     pollAddr
         lda     #>scanlinePollTable ; high byte
         sta     pollAddr+1
+stageSpeed:
+        lda     #$0E
+        sta     menuBuffer
+        lda     #$21
+        sta     menuBuffer+1
+        lda     #$CC
+        sta     menuBuffer+2
+        lda     #$00
+        sta     menuBuffer+17
 ; convert to decimal
         lda     #$70
         sta     factorA24
