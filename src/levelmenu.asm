@@ -195,7 +195,7 @@ stageGameType:
         sta     menuBuffer
         lda     #$21
         sta     menuBuffer+1
-        lda     #$0C
+        lda     #$2C
         sta     menuBuffer+2
         lda     #$0A
         clc
@@ -205,7 +205,7 @@ stageGameType:
         sta     menuBuffer+4
         lda     #$21
         sta     menuBuffer+5
-        lda     #$8E
+        lda     #$AE
         sta     menuBuffer+6
 ; check whether to show or clear b-type height
         lda     gameType
@@ -239,7 +239,7 @@ stageMusicType:
         sta     menuBuffer
         lda     #$21
         sta     menuBuffer+1
-        lda     #$4C
+        lda     #$6C
         sta     menuBuffer+2
         lda     #$00
         sta     menuBuffer+4
@@ -266,7 +266,7 @@ levelMenu_level: ; starts at 218c
         beq     @changeTens
         lda     #$0A
         sta     tmp2
-        lda     #$8D
+        lda     #$AD
         sta     menuBuffer+2
         lda     generalCounter
         clc
@@ -279,7 +279,7 @@ levelMenu_level: ; starts at 218c
 @changeTens:
         lda     #$03
         sta     tmp2
-        lda     #$8C
+        lda     #$AC
         sta     menuBuffer+2
         lda     generalCounter
         clc
@@ -299,7 +299,7 @@ levelMenu_level: ; starts at 218c
         jsr     restrictToRange
         sta     startHeight
         sta     menuBuffer+3
-        lda     #$8F
+        lda     #$AF
         sta     menuBuffer+2
         rts
 
@@ -308,7 +308,7 @@ stageLevel:
         sta     menuBuffer
         lda     #$21
         sta     menuBuffer+1
-        lda     #$8C
+        lda     #$AC
         sta     menuBuffer+2
         lda     startLevelTens
         sta     menuBuffer+3
@@ -349,7 +349,7 @@ stageSpeed:
         sta     menuBuffer
         lda     #$21
         sta     menuBuffer+1
-        lda     #$CC
+        lda     #$EC
         sta     menuBuffer+2
         lda     #$00
         sta     menuBuffer+17
@@ -485,7 +485,7 @@ stageCursorSprites:
         asl
         sta     tmp1
         clc
-        adc     #$3F
+        adc     #$47
         sta     oamStaging,x
         lda     #$27
         sta     oamStaging+1,x
@@ -500,7 +500,7 @@ stageCursorSprites:
 ; arrow sprites
         lda     tmp1
         clc
-        adc     #$34
+        adc     #$3C
         sta     oamStaging,x
         lda     #$92
         sta     oamStaging+1,x
@@ -514,7 +514,7 @@ stageCursorSprites:
         adc     #$04
         tax
         lda     tmp1
-        adc     #$49
+        adc     #$51
         sta     oamStaging,x
         lda     #$A2
         sta     oamStaging+1,x
