@@ -2634,18 +2634,10 @@ L9C64:  lda     score+1
 L9C75:  lda     score+2
         and     #$0F
         cmp     #$0A
-        bcc     L9C84
+        bcc     L9C94
         lda     score+2
         clc
         adc     #$06
-        sta     score+2
-L9C84:  lda     score+2
-        and     #$F0
-        cmp     #$A0
-        bcc     L9C94
-        lda     #$99
-        sta     score
-        sta     score+1
         sta     score+2
 L9C94:  dec     generalCounter
         bne     L9C37
