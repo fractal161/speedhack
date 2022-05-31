@@ -21,6 +21,22 @@ playState_playerControlsActiveTetrimino:
         ; idle when gameCycleCount >= pollsThisFrame
         jmp     @waitForNextPoll
 @retAndClear:
+        ; adjust pollIndex so entry delay works
+        jsr     rewindPollIndex
         sei ; so no interrupts are called during lock/line clear delay
 @ret:
+        rts
+
+rewindPollIndex:
+        lda     pollIndex
+        sec
+        sbc     subFrameTop
+@while:
+        cmp     #$00
+        bpl     @ret
+        clc
+        adc     pollsPerFrame
+        jmp     @while
+@ret:
+        sta     pollIndex
         rts
