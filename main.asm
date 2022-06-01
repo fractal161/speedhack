@@ -2145,6 +2145,7 @@ playState_spawnNextTetrimino:
         sta     tetriminoY
         lda     #$01
         sta     playState
+        sta     framesToWait
         cli
         lda     #$05
         sta     tetriminoX
