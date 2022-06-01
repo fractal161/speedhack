@@ -22,11 +22,11 @@ unprocessedPolls = 1
 
 function log(action, data)
   state = emu.getState()
-  scanline = (state.ppu.scanline - 240) % 241
+  scanline = (state.ppu.scanline - 240) % 261
   if scanline < 0 then
     scanline = scanline + 241
   end
-  subframe = state.ppu.frameCount + scanline / 241
+  subframe = state.ppu.frameCount + scanline / 261
   logMsg = string.format('[%09.3f] %s', subframe, action)
   if data ~= nil then
     logMsg = string.format('%s - %s', logMsg, data)
