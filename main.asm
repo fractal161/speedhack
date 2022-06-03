@@ -512,7 +512,7 @@ gameMode_titleScreen:
         lda     #$00
         jsr     changeCHRBank1
         jsr     bulkCopyToPpu
-        .addr   menu_palette
+        .addr   title_palette
         jsr     bulkCopyToPpu
         .addr   title_screen_nametable
         jsr     waitForVBlankAndEnableNmi
@@ -4650,6 +4650,10 @@ legal_screen_palette:
         .byte   $3F,$00,$10,$0F,$27,$2A,$2B,$0F
         .byte   $3C,$2A,$22,$0F,$27,$2C,$29,$0F
         .byte   $30,$3A,$15,$FF
+title_palette:
+        .byte   $3F,$00,$0C,$0F,$30,$0F,$00
+        .byte   $0F,$2A,$27,$16
+        .byte   $0F,$30,$00,$28,$FF
 menu_palette:
         .byte   $3F,$00,$14,$0F,$30,$38,$00,$0F
         .byte   $30,$16,$00,$0F,$30,$21,$00,$0F
