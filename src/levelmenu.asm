@@ -66,7 +66,7 @@ gameMode_levelMenu_processPlayerNavigation:
         jsr     gameMode_levelMenu_processConfigInput
         jsr     stageCursorSprites
         ; jsr     menuMusic
-        lda     heldButtons
+        lda     newlyPressedButtons
         cmp     #$20
         bne     @chooseRandomHole_1
         lda     #$02
