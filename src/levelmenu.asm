@@ -53,7 +53,7 @@ gameMode_levelMenu:
         jsr     updateAudioWaitForNmiAndResetOamStaging
 
 gameMode_levelMenu_processPlayerNavigation:
-        lda     newlyPressedButtons
+        lda     heldButtons
         cmp     #$10
         bne     @notStart
         lda     #$00
