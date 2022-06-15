@@ -502,7 +502,7 @@ stageCursorSprites:
         clc
         adc     #$3C
         sta     oamStaging,x
-        lda     #$92
+        lda     #$50
         sta     oamStaging+1,x
         lda     #$00
         sta     oamStaging+2,x
@@ -516,7 +516,7 @@ stageCursorSprites:
         lda     tmp1
         adc     #$51
         sta     oamStaging,x
-        lda     #$A2
+        lda     #$51
         sta     oamStaging+1,x
         lda     #$00
         sta     oamStaging+2,x

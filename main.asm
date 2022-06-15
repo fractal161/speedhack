@@ -348,7 +348,7 @@ initRamContinued:
         jsr     updateAudioWaitForNmiAndResetOamStaging
         jsr     updateAudioWaitForNmiAndEnablePpuRendering
         jsr     updateAudioWaitForNmiAndResetOamStaging
-        lda     #$00
+        lda     #$01
         sta     gameModeState
         sta     gameMode
         sta     frameCounter+1
