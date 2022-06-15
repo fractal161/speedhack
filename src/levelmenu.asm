@@ -53,8 +53,11 @@ gameMode_levelMenu:
         jsr     updateAudioWaitForNmiAndResetOamStaging
 
 gameMode_levelMenu_processPlayerNavigation:
-        lda     heldButtons
+        lda     newlyPressedButtons
         cmp     #$10
+        bne     @notStart
+        ; check if other buttons are pressed
+        eor     heldButtons
         bne     @notStart
         lda     #$00
         sta     gameModeState
