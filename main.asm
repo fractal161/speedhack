@@ -724,14 +724,31 @@ gameModeState_initGameBackground:
         .addr   game_palette
         jsr     bulkCopyToPpu
         .addr   game_nametable
+        ; render speed
         lda     #$20
         sta     PPUADDR
         lda     #$83
         sta     PPUADDR
+        ; check hundreds
+        lda     bcd32+2
+        beq     @noHundreds
+        and     #$0F
+        sta     PPUDATA
+        jmp     @tensAndLower
+@noHundreds:
+        lda     #$FF
+        sta     PPUDATA
+@tensAndLower:
+        lda     bcd32+1
+        jsr     twoDigsToPPU
+        lda     #$2A
+        sta     PPUDATA
+        lda     bcd32
+        jsr     twoDigsToPPU
         lda     gameType
         bne     @typeB
-        lda     #$0A
-        sta     PPUDATA
+        ; lda     #$0A
+        ; sta     PPUDATA
         lda     #$20
         sta     PPUADDR
         lda     #$B8
@@ -744,8 +761,8 @@ gameModeState_initGameBackground:
         jsr     twoDigsToPPU
         jmp     gameModeState_initGameBackground_finish
 
-@typeB: lda     #$0B
-        sta     PPUDATA
+@typeB: ; lda     #$0B
+        ; sta     PPUDATA
         lda     #$20
         sta     PPUADDR
         lda     #$B8
