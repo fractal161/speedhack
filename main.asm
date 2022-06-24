@@ -2729,8 +2729,6 @@ playState_checkForCompletedRows:
 @ret:   rts
 
 playState_receiveGarbage:
-        inc     playState ; until everything else is implemented
-        rts
         lda     isEntryDelay
         beq     @decCounter
         ; two frames after to spawn next piece

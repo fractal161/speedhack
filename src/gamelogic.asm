@@ -24,6 +24,8 @@ playState_playerControlsActiveTetrimino:
         ; adjust pollIndex so entry delay works
         jsr     rewindPollIndex
         sta     $E000 ; disable irq generation
+        lda     #$01
+        sta     isEntryDelay
         sei ; so no interrupts are called during lock/line clear delay
 @ret:
         rts
