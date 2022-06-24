@@ -291,9 +291,10 @@ initRamContinued:
         stx     rng_seed
         dex
         stx     rng_seed+1
-        lda     #$01
+        ; pal speed
+        lda     #$06
         sta     subFrameTop
-        lda     #$01
+        lda     #$05
         sta     pollsPerFrame
         ldy     #$00
         sty     ppuScrollX
