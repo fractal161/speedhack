@@ -210,6 +210,7 @@ SND_CHN         := $4015
 JOY1            := $4016
 JOY2_APUFC      := $4017                        ; read: bits 0-4 joy data lines (bit 0 being normal controller), bits 6-7 are FC inhibit and mode
 
+MMC1_Control    := $9FFF
 MMC1_CHR0       := $BFFF
 MMC1_CHR1       := $DFFF
 
@@ -1104,7 +1105,7 @@ gameModeState_initGameState:
         sta     demoButtonsAddr+1
         lda     #$03
         sta     renderMode
-        lda     #$A0
+        lda     #$B4
         sta     autorepeatY
         jsr     chooseNextTetrimino
         sta     currentPiece
@@ -1342,10 +1343,10 @@ drop_tetrimino:
         jmp     @ret
 
 framesPerDropTable:
-        .byte   $30,$2B,$26,$21,$1C,$17,$12,$0D
-        .byte   $08,$06,$05,$05,$05,$04,$04,$04
-        .byte   $03,$03,$03,$02,$02,$02,$02,$02
-        .byte   $02,$02,$02,$02,$02,$01
+        .byte   $24,$20,$1D,$19,$16,$12,$0F,$0B
+        .byte   $07,$05,$04,$04,$04,$03,$03,$03
+        .byte   $02,$02,$02,$01,$01,$01,$01,$01
+        .byte   $01,$01,$01,$01,$01,$01
 
 shift_tetrimino:
         lda     tetriminoX
@@ -1361,9 +1362,9 @@ shift_tetrimino:
         beq     @ret
         inc     autorepeatX
         lda     autorepeatX
-        cmp     #$10
+        cmp     #$0C
         bmi     @ret
-        lda     #$0A
+        lda     #$08
         sta     autorepeatX
         jmp     @buttonHeldDown
 
@@ -1395,7 +1396,7 @@ shift_tetrimino:
 @restoreX:
         lda     originalY
         sta     tetriminoX
-        lda     #$10
+        lda     #$0C
         sta     autorepeatX
 @ret:   rts
 
@@ -3323,7 +3324,6 @@ L9FE9:  ldy     #$00
 
 showHighScores:
         jsr     bulkCopyToPpu      ;not using @-label due to MMC1_Control in PAL
-MMC1_Control    := * + 1
         .addr   high_scores_nametable
         lda     #$00
         sta     generalCounter2
