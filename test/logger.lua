@@ -1,23 +1,32 @@
-﻿logging = true
-
-playState = emu.getLabelAddress('playState')
-poll = emu.getLabelAddress('pollControllerButtons')
+logging = true
 
 startTime = os.date('%Y-%m-%d-%H%M%S')
-path = '/home/justin/Tetris/NES/Romhacking/nes-tetris-infinity/log'
+path = '/home/justin/Tetris/nes/hacks/nes-tetris-infinity/log'
 logFileName = string.format('%s/%s.txt', path, startTime)
-f = assert(io.open(logFileName, 'w'))
+f = io.open(logFileName, 'w')
 
-f:write('VANILLA ROM')
-f:write('----')
+f:write('PAL\n')
+f:write('----\n')
+
+emu.log(emu.getRomInfo().name)
+if emu.getRomInfo().name == 'Tetris.nes' then
+  playState = emu.getLabelAddress('player1_playState')
+else
+  playState = emu.getLabelAddress('playState')
+end
+poll = emu.getLabelAddress('pollController')
+gameLoopStart = emu.getLabelAddress('shift_tetrimino')
+gameModeState = emu.getLabelAddress('gameModeState')
+
+unprocessedPolls = 1
 
 function log(action, data)
   state = emu.getState()
-  scanline = (state.ppu.scanline - 240) % 241
+  scanline = (state.ppu.scanline - 240) % 261
   if scanline < 0 then
     scanline = scanline + 241
   end
-  subframe = state.ppu.frameCount + scanline / 241
+  subframe = state.ppu.frameCount + scanline / 261
   logMsg = string.format('[%09.3f] %s', subframe, action)
   if data ~= nil then
     logMsg = string.format('%s - %s', logMsg, data)
@@ -28,12 +37,17 @@ function log(action, data)
   end
 end
 
+-- Polling
 function onPoll()
-  if emu.read(playState, emu.memType.cpuDebug) == 1 then
-    log('POLL')
+  if emu.read(playState, emu.memType.cpuDebug) == 1 and
+    (emu.read(gameModeState, emu.memType.cpuDebug) == 2
+    or emu.read(gameModeState, emu.memType.cpuDebug) == 4) then
+    unprocessedPolls = unprocessedPolls + 1
+    log('POLL', string.format('%d unprocessed', unprocessedPolls))
   end
 end
 
+-- Piece spawn/lock
 function onGameStateChange(address, state)
   oldState = emu.read(playState, emu.memType.cpuDebug)
   if oldState ~= 1 and state == 1 then
@@ -41,7 +55,14 @@ function onGameStateChange(address, state)
   end
   if oldState == 1 and state ~= 1 then
     log('PIECE LOCK')
+    unprocessedPolls = 0
   end
+end
+
+-- Processing polls
+function onGameLoopStart(address, state)
+  unprocessedPolls = unprocessedPolls - 1
+  log('GAME CYCLE', string.format('%d unprocessed', unprocessedPolls))
 end
 
 -- setup callbacks
@@ -55,4 +76,6 @@ end
 
 emu.addMemoryCallback(onPoll, emu.memCallbackType.cpuExec, poll)
 emu.addMemoryCallback(onGameStateChange, emu.memCallbackType.cpuWrite, playState)
+emu.addMemoryCallback(onGameLoopStart, emu.memCallbackType.cpuExec, gameLoopStart)
+
 emu.addEventCallback(clean, emu.eventType.scriptEnded)
