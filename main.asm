@@ -390,9 +390,9 @@ branchOnGameMode:
 
 gameModeState_updatePlayer:
         jsr     makePlayerActive
-        jsr     stageSpriteForNextPiece
         jsr     branchOnPlayStatePlayer
         jsr     stageSpriteForCurrentPiece
+        jsr     stageSpriteForNextPiece
         inc     gameModeState
         rts
 
