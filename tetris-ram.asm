@@ -11,7 +11,9 @@ gameCycleCount: .res 1 ; $0009
 pollIndex: .res 1 ; $000A
 pollAddr: .res 2 ; $000B
 framesToWait: .res 1 ; $000D
-.res 9
+entryDelay: .res 1 ; $000E
+isEntryDelay: .res 1 ; $000F
+.res 7
 rng_seed:	.res 2	; $0017
 spawnID:	.res 1	; $0019
 spawnCount:	.res 1	; $001A

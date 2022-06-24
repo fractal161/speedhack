@@ -13,6 +13,8 @@ gameCycleCount  := pollRam+4
 pollIndex       := pollRam+5
 pollAddr        := pollRam+6
 framesToWait    := pollRam+8
+entryDelay      := pollRam+9
+isEntryDelay    := pollRam+10
 patchToPpuAddr  := $0014
 rng_seed        := $0017
 spawnID         := $0019
@@ -1099,6 +1101,8 @@ gameModeState_initGameState:
         sta     demoButtonsAddr
         sta     spawnID
         sta     pollIndex
+        sta     entryDelay
+        sta     isEntryDelay
         lda     #$01
         sta     framesToWait
         lda     #>demoButtonsTable
@@ -2725,8 +2729,38 @@ playState_checkForCompletedRows:
 @ret:   rts
 
 playState_receiveGarbage:
-@ret:  inc     playState
-@delay:  rts
+        inc     playState ; until everything else is implemented
+        rts
+        lda     isEntryDelay
+        beq     @decCounter
+        ; two frames after to spawn next piece
+        lda     entryDelay
+        clc
+        adc     #$02
+        adc     pollIndex ; this works i promise
+        sta     pollIndex
+        lda     #$00
+        sta     isEntryDelay
+        sta     entryDelay
+        ; wait an additional entryDelay/5 frames
+        lda     pollIndex
+@while:
+        cmp     pollsPerFrame
+        bcc     @ret
+        sec
+        sbc     pollsPerFrame
+        inc     entryDelay ; now stores extra frames to wait
+        jmp     @while
+@ret:
+        ; now pollIndex contains the remainder as desired.
+        rts
+@decCounter:
+        dec     entryDelay
+        beq     @advance
+        rts
+@advance:
+        inc     playState
+        rts
 
 garbageLines:
         .byte   $00,$00,$01,$02,$04
