@@ -530,9 +530,9 @@ gameMode_titleScreen:
         lda     newlyPressedButtons
         cmp     #$10
         beq     @startButtonPressed
-        lda     frameCounter+1
-        cmp     #$05
-        beq     @timeout
+;        lda     frameCounter+1
+;        cmp     #$05
+;        beq     @timeout
         jmp     @waitForStartButton
 
 ; Show menu screens
