@@ -218,6 +218,7 @@ SND_CHN         := $4015
 JOY1            := $4016
 JOY2_APUFC      := $4017                        ; read: bits 0-4 joy data lines (bit 0 being normal controller), bits 6-7 are FC inhibit and mode
 
+MMC1_Control	:= $9FFF
 MMC1_CHR0       := $BFFF
 MMC1_CHR1       := $DFFF
 
@@ -3086,9 +3087,9 @@ L9FE9:  ldy     #$00
         rts
 
 showHighScores:
-        jsr     bulkCopyToPpu      ;not using @-label due to MMC1_Control in PAL
-MMC1_Control    := * + 1
-        .addr   high_scores_nametable
+;        jsr     bulkCopyToPpu      ;not using @-label due to MMC1_Control in PAL
+;MMC1_Control    := * + 1
+;        .addr   high_scores_nametable
         lda     #$00
         sta     generalCounter2
         lda     gameType
