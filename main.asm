@@ -4550,7 +4550,9 @@ updateAudioWaitForNmiAndResetOamStaging:
         jsr     updateAudio
         lda     #$00
         sta     verticalBlankingInterval
-        nop
+        lda     isEntryDelay
+		beq     @checkForNmi
+		inc     entryDelay
 @checkForNmi:
         lda     verticalBlankingInterval
         beq     @checkForNmi
