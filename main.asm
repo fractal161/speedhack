@@ -533,6 +533,9 @@ gameMode_titleScreen:
 ;        lda     frameCounter+1
 ;        cmp     #$05
 ;        beq     @timeout
+        lda     #$5A
+        sta     spriteIndexInOamContentLookup
+		jsr		loadSpriteIntoOamStaging
         jmp     @waitForStartButton
 
 ; Show menu screens
@@ -1412,6 +1415,7 @@ oamContentLookup:
         .addr   isPositionValid
         .addr   isPositionValid
         .addr   isPositionValid
+		.addr	sprite5AArrow
 ; Sprites are sets of 4 bytes in the OAM format, terminated by FF. byte0=y, byte1=tile, byte2=attrs, byte3=x
 sprite00LevelSelectCursor:
         .byte   $00,$FC,$20,$00,$00,$FC,$20,$08
@@ -1809,6 +1813,12 @@ sprite55Penguin2:
         .byte   $F8,$CE,$21,$08,$F8,$CF,$21,$10
         .byte   $00,$DD,$21,$00,$00,$DE,$21,$08
         .byte   $FF
+; Sprites are sets of 4 bytes in the OAM format, terminated by FF. byte0=y, byte1=tile, byte2=attrs, byte3=x
+sprite5AArrow:
+		.byte	$88,$55,$00,$80,$88,$56,$00,$88
+		.byte   $88,$57,$00,$90,$88,$58,$00,$98
+		.byte   $88,$59,$00,$A0,$85,$5A,$00,$A8
+		.byte   $85,$5B,$00,$B0,$FF
 multBy12Table:
         .byte   $00,$0C,$18,$24,$30,$3C,$48,$54
         .byte   $60,$6C,$78,$84,$90,$9C,$A8,$B4
@@ -4668,9 +4678,11 @@ legal_screen_palette:
         .byte   $3C,$2A,$22,$0F,$27,$2C,$29,$0F
         .byte   $30,$3A,$15,$FF
 title_palette:
-        .byte   $3F,$00,$0C,$0F,$30,$0F,$00
+        .byte   $3F,$00,$14,$0F,$30,$0F,$00
         .byte   $0F,$2A,$27,$16
-        .byte   $0F,$30,$00,$28,$FF
+        .byte   $0F,$30,$00,$28
+		.byte   $00,$00,$04,$2C
+		.byte   $0F,$20,$20,$0F,$FF
 menu_palette:
         .byte   $3F,$00,$14,$0F,$30,$38,$00,$0F
         .byte   $30,$16,$00,$0F,$30,$21,$00,$0F
