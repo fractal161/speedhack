@@ -2751,6 +2751,7 @@ playState_receiveGarbage:
         jmp     @while
 @ret:
         ; now pollIndex contains the remainder as desired.
+		sta     pollIndex
         rts
 @decCounter:
         dec     entryDelay
