@@ -1,10 +1,6 @@
-# NES Tetris Infinity
+# PAL Mode
 
-Romhack of NES Tetris that implements consistent subframe controller polling, intended to facilitate faster yet fair killscreen gameplay. The main idea is that the pieces fall in a predictable way, so not refreshing the display isn't a huge detriment.
-
-In making this, a large portion of unnecessary/unused code has been stripped from the original ROM. A lightweight game on its own, it only used about 30% of each frame to run actual gameplay on average. Through optimization, this time has been cut down to less than 10%. We expect that the max polling rate can exceed 780hz in most conditions, and can likely go up to 1000hz.
-
-Based on some crude testing, the main game loop (shift, rotate, drop tetrimino) never takes more than 1500 cycles to execute, while the input polling routine is 268 cycles. Waiting for NMI is at least 24000 cycles, so this is already room for 13 game frames, or 780hz polling. In practice, game frames will be much smaller due to a limit on the number of inputs.
+Surprisingly, this is *not* just speedhack with 5/6 on. I have to change things like the gravity tables, and most importantly the entry delay timings. This has been minimally tested as of now, but the end goal is to be able to play TASes made for the original PAL rom, so that it may be a true alternative for people with access to only NTSC hardware.
 
 ## Acknowledgements
 

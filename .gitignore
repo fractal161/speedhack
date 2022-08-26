@@ -2,6 +2,6 @@
 *.o
 *.chr
 *.pyc
-infinity.lst
-infinity.lbl
-infinity.dbg
+pal.lst
+pal.lbl
+pal.dbg
