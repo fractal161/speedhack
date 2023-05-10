@@ -4522,6 +4522,16 @@ pollController:
         lda     newlyPressedButtons
         and     pollTmp
         sta     newlyPressedButtons
+.ifdef GOOFY
+        asl
+        and     #$AA
+        sta     pollTmp
+        lda     newlyPressedButtons
+        and     #$AA
+        lsr
+        ora     pollTmp
+        sta     newlyPressedButtons
+.endif
 diffOldAndNewButtons:
         tay
         eor     heldButtons
