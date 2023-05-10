@@ -4523,6 +4523,8 @@ pollController:
         and     pollTmp
         sta     newlyPressedButtons
 .ifdef GOOFY
+        ; Goofy foot code from
+        ; https://github.com/kirjavascript/TetrisGYM/blob/master/src/nmi/pollcontroller.asm#L152
         asl
         and     #$AA
         sta     pollTmp
