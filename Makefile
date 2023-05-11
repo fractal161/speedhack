@@ -39,9 +39,8 @@ clean:
 tools:
 	$(MAKE) -C tools/cTools/
 
-goofy: CAFLAGS = -g -D GOOFY
-goofy: speedhack.nes
-	@echo GOOFY flag enabled
+goofy: CAFLAGS += -D GOOFY
+goofy: $(tetris)
 
 # Build tools when building the rom.
 # This has to happen before the rules are processed, since that's when scan_includes is run.
