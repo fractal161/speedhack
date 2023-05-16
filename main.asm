@@ -4522,6 +4522,18 @@ pollController:
         lda     newlyPressedButtons
         and     pollTmp
         sta     newlyPressedButtons
+.ifdef GOOFY
+        ; Goofy foot code from
+        ; https://github.com/kirjavascript/TetrisGYM/blob/master/src/nmi/pollcontroller.asm#L152
+        asl
+        and     #$AA
+        sta     pollTmp
+        lda     newlyPressedButtons
+        and     #$AA
+        lsr
+        ora     pollTmp
+        sta     newlyPressedButtons
+.endif
 diffOldAndNewButtons:
         tay
         eor     heldButtons
