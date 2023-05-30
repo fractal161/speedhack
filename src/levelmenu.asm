@@ -16,7 +16,6 @@ restrictToRange:
         rts
 
 gameMode_levelMenu:
-        inc     initRam
         jsr     updateAudio2
         lda     #$01
         sta     renderMode
