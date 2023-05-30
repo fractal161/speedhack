@@ -567,7 +567,6 @@ render_mode_legal_and_title_screens:
         rts
 
 gameMode_gameTypeMenu:
-        inc     initRam
         lda     #$01
         sta     renderMode
         jsr     updateAudioWaitForNmiAndDisablePpuRendering
@@ -3341,7 +3340,6 @@ highScoreIndexToHighScoreNamesOffset:
 highScoreIndexToHighScoreScoresOffset:
         .byte   $00,$03,$06,$09,$0C,$0F,$12,$15
 highScoreEntryScreen:
-        inc     initRam
         lda     #$09
         jsr     setMusicTrack
         lda     #$02
@@ -4619,17 +4617,6 @@ switch_s_plus_2a:
         stx     tmp1
         jmp     (tmp1)
 
-setMMC1Control:
-        sta     MMC1_Control
-        lsr     a
-        sta     MMC1_Control
-        lsr     a
-        sta     MMC1_Control
-        lsr     a
-        sta     MMC1_Control
-        lsr     a
-        sta     MMC1_Control
-        rts
 
 changeCHRBank0:
         asl     a
@@ -6443,7 +6430,18 @@ music_endings_noiseScript:
 .segment        "PRG_chunk3": absolute
 
 ; incremented to reset MMC1 reg
-reset:  cld
+reset:  
+        ldx     #$06
+        stx     $8000
+        ldx     #$00
+        stx     $8001
+        ldx     #$07
+        stx     $8000
+        ldx     #$01
+        stx     $8001
+        ldx     #$00
+        stx     $8000
+        cld
         sei
         ldx     #$00
         stx     PPUCTRL
@@ -6456,9 +6454,6 @@ reset:  cld
         bpl     @vsyncWait2
         dex
         txs
-        inc     reset
-        lda     #$10
-        jsr     setMMC1Control
         lda     #$00
         jsr     changeCHRBank0
         lda     #$00
