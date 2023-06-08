@@ -3883,14 +3883,14 @@ playState_bTypeGoalCheck:
 @graphicCopied:  lda     #$00
         sta     vramRow
         jsr     sleep_for_14_vblanks
-        lda     #$00
-        sta     renderMode
         lda     #$80
         jsr     sleep_for_a_vblanks
         jsr     endingAnimation_maybe
         lda     #$00
         sta     playState
         inc     gameModeState
+        lda     #$04
+        sta     renderMode
         rts
 
 @ret:  inc     playState
