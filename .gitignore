@@ -2,6 +2,6 @@
 *.o
 *.chr
 *.pyc
-speedhack.lst
-speedhack.lbl
-speedhack.dbg
+*.lst
+*.lbl
+*.dbg

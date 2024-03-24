@@ -534,9 +534,12 @@ gameMode_titleScreen:
 ;        lda     frameCounter+1
 ;        cmp     #$05
 ;        beq     @timeout
+        lda     #$00
+        sta     spriteXOffset
+        sta     spriteYOffset
         lda     #$5A
         sta     spriteIndexInOamContentLookup
-		jsr		loadSpriteIntoOamStaging
+        jsr     loadSpriteIntoOamStaging
         jmp     @waitForStartButton
 
 ; Show menu screens
